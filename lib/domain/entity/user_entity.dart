@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class User {
+class UserEntity {
   String name;
   String email;
   String avatar;
   List<String> groupsId;
 
-  User({
+  UserEntity({
     required this.name,
     required this.email,
     required this.avatar,
     required this.groupsId,
   });
 
-  User.fromMap(Map<String, dynamic> map)
+  UserEntity.fromMap(Map<String, dynamic> map)
     : name = map['name'],
       email = map['email'],
       avatar = map['avatar'] ?? '1',
@@ -34,10 +34,10 @@ class UserService {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<User> readUser() async {
+  Future<UserEntity> readUser() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
         await firestore.collection("users").doc(uid).get();
 
-    return User.fromMap(snapshot.data()!);
+    return UserEntity.fromMap(snapshot.data()!);
   }
 }
