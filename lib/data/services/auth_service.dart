@@ -36,6 +36,7 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       await userCredential.user!.updateDisplayName(name);
+      await userCredential.user!.updatePhotoURL('1');
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "email-already-in-use":
@@ -49,7 +50,6 @@ class AuthService {
     } catch (e) {
       return 'Big error';
     }
-
     return null;
   }
 }

@@ -1,13 +1,13 @@
 class UserEntity {
-  String name;
-  String email;
-  String avatar;
+  String? name;
+  String? email;
+  String? avatar;
   List<String> groupsId;
 
   UserEntity({
-    required this.name,
-    required this.email,
-    required this.avatar,
+    this.name = '',
+    this.email = '',
+    this.avatar = '',
     required this.groupsId,
   });
 

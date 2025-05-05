@@ -31,10 +31,7 @@ class UnoverseApp extends StatelessWidget {
         ),
       ),
       home: const RoteadorTelas(),
-      routes: {
-        'loginScreen': (context) => LoginPage(),
-        'homeScreen': (context) => HomePage(),
-      },
+      routes: {'loginScreen': (context) => LoginPage()},
     );
   }
 }
@@ -51,7 +48,7 @@ class RoteadorTelas extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else {
           if (snapshot.hasData) {
-            return HomePage();
+            return HomePage(user: snapshot.data!);
           } else {
             return const LoginPage();
           }
