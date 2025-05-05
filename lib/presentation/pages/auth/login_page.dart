@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unoverse/presentation/pages/auth/auth_controller.dart';
+
+import '../../controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unoverse/firebase_options.dart';
-import 'package:unoverse/presentation/pages/home/home_page.dart';
 
+import 'presentation/pages/home/home_page.dart';
 import 'presentation/pages/auth/login_page.dart';
 
 void main() async {

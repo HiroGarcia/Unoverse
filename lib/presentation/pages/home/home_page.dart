@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:unoverse/domain/entity/group_entity.dart';
-import 'package:unoverse/domain/entity/user_entity.dart';
+
+import '../../../data/services/group_service.dart';
+import '../../../data/services/user_service.dart';
+import '../../../domain/entity/group_entity.dart';
+import '../../../domain/entity/user_entity.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -53,7 +56,7 @@ class _HomePageState extends State<HomePage> {
             title: Text('Unoverse Groups'),
             actions: [
               IconButton(
-                onPressed: () async {
+                onPressed: () {
                   print('--------------');
                   print('Nome: ${user!.name}');
                   print('Email: ${user!.email}');
@@ -67,9 +70,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              refresh();
-            },
+            onPressed: () {},
             child: Icon(Icons.add),
           ),
           drawer: Drawer(),

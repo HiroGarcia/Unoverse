@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unoverse/data/services/auth_service.dart';
 
-import '../../widgets/show_snackbar.dart';
+import '../../data/services/auth_service.dart';
+import '../widgets/show_snackbar.dart';
 
 class AuthController {
   AuthService authService = AuthService();
