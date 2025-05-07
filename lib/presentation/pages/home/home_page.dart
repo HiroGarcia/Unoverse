@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'package:unoverse/presentation/pages/group/group_page.dart';
 import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
 import '../../../data/services/group_service.dart';
 import '../../../data/services/user_service.dart';
+import '../../../domain/entity/enum_type.dart';
 import '../../../domain/entity/group_entity.dart';
 import '../../../domain/entity/user_entity.dart';
 
@@ -52,7 +55,11 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showFormModal(context: context, uid: widget.user.uid);
+          showFormModal(
+            context: context,
+            uid: widget.user.uid,
+            type: EnumType.group,
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -75,22 +82,32 @@ class _HomePageState extends State<HomePage> {
                   itemCount: listGroup.length,
                   itemBuilder: (context, index) {
                     final group = listGroup[index];
-                    return Card(
-                      color: Colors.amber,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              group.name,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GroupPage(group: group),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        color: Colors.amber,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                group.name,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text('ID: ${group.groupId}'),
-                          ],
+                              const SizedBox(height: 8),
+                              Text('ID: ${group.groupId}'),
+                            ],
+                          ),
                         ),
                       ),
                     );
