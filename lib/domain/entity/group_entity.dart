@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Group {
   String groupId;
   String name;
   String createBy;
   List<String>? members;
   Map<String, String> role;
-  String createIn;
+  DateTime createIn;
   Map<String, int> config;
 
   Group({
@@ -25,7 +27,7 @@ class Group {
         map['members'] != null ? List<String>.from(map['members']) : [],
       ),
       role = Map<String, String>.from(map['role']),
-      createIn = map['createIn'],
+      createIn = (map['createIn'] as Timestamp).toDate(),
       config = Map<String, int>.from(map['config']);
 
   Map<String, dynamic> toMap() {

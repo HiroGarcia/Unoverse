@@ -19,7 +19,7 @@ class ModalController {
         createBy: uid,
         members: members,
         role: role,
-        createIn: DateTime.now().toString(),
+        createIn: DateTime.now(),
         config: config,
       ),
     );
