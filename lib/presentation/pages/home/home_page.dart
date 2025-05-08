@@ -2,11 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:unoverse/presentation/pages/group/group_page.dart';
+import 'package:unoverse/presentation/widgets/group_card.dart';
 import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
 import '../../../data/services/group_provider.dart';
-import '../../../data/services/group_service.dart';
 import '../../../data/services/user_service.dart';
 import '../../../domain/entity/enum_type.dart';
 import '../../../domain/entity/group_entity.dart';
@@ -22,9 +21,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserService userService = UserService();
-  GroupService groupService = GroupService();
-  List<Group> listGroup = [];
-  FirebaseAuth status = FirebaseAuth.instance;
 
   UserEntity user = UserEntity(groupsId: []);
 
@@ -35,17 +31,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   void initData() async {
-    user = await refresh();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<GroupProvider>(
-        context,
-        listen: false,
-      ).loadGroups(user.groupsId);
+    user = await userService.readUser().then((user) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<GroupProvider>(
+          context,
+          listen: false,
+        ).loadGroups(user.groupsId);
+      });
+      return user;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Group> groups = context.watch<GroupProvider>().groups;
     return Scaffold(
       appBar: AppBar(
         title: Text('Unoverse Groups'),
@@ -57,7 +56,8 @@ class _HomePageState extends State<HomePage> {
               print('Email: ${widget.user.email}');
               print('Avatar: ${widget.user.photoURL}');
               print('Grupos: ${user.groupsId}');
-              print('Name Group: ${listGroup[0].name}');
+              print('Name Group: ${groups[0].name}');
+              refresh();
             },
             icon: Icon(Icons.mode_edit_sharp),
             color: Colors.black,
@@ -90,38 +90,11 @@ class _HomePageState extends State<HomePage> {
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
                   ),
-                  itemCount: listGroup.length,
+                  itemCount: groups.length,
                   itemBuilder: (context, index) {
-                    final group = listGroup[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GroupPage(group: group),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        color: Colors.amber,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                group.name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text('ID: ${group.groupId}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
+                    final group = groups[index];
+
+                    return GroupCard(group: group);
                   },
                 ),
               ),
@@ -129,23 +102,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   refresh() async {
-    UserEntity user = await userService.readUser();
+    final UserEntity updatedUser = await userService.readUser();
 
-    try {
-      if (user.groupsId.isNotEmpty) {
-        List<Group> lisGroup = await groupService.readGroup(
-          groupId: user.groupsId,
-        );
-        listGroup = lisGroup;
-      } else {
-        listGroup = [];
-      }
-    } on FirebaseException catch (e) {
-      print('Erro fire ao carregar grupos: $e');
-    } catch (e) {
-      print('Erro ao carregar grupos: $e');
-    }
-    setState(() {});
-    return user;
+    Provider.of<GroupProvider>(
+      context,
+      listen: false,
+    ).loadGroups(updatedUser.groupsId);
   }
 }
