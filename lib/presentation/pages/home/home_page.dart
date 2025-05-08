@@ -10,15 +10,10 @@ import '../../../data/services/user_provider.dart';
 
 import '../../../domain/entity/enum_type.dart';
 
-class HomePage extends StatefulWidget {
-  final User user;
-  const HomePage({super.key, required this.user});
+class HomePage extends StatelessWidget {
+  final User userAuth;
+  const HomePage({super.key, required this.userAuth});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().user;
@@ -42,9 +37,9 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () {
               print('--------------');
-              print('Nome: ${widget.user.displayName}');
-              print('Email: ${widget.user.email}');
-              print('Avatar: ${widget.user.photoURL}');
+              print('Nome: ${userAuth.displayName}');
+              print('Email: ${user.email}');
+              print('Avatar: ${userAuth.photoURL}');
               print('Grupos: ${user.groupsId}');
               print('Name Group: ${groups[0].name}');
               print(groups.length);
@@ -58,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           showFormModal(
             context: context,
-            uid: widget.user.uid,
+            uid: userAuth.uid,
             type: EnumType.group,
           );
         },

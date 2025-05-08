@@ -135,7 +135,7 @@ showFormModal({
                     if (value == null || value.isEmpty) {
                       return 'Pontuação inicial é obrigatória';
                     }
-                    // Check if it's a valid integer
+
                     if (int.tryParse(value) == null) {
                       return 'Entre com um número válido';
                     }

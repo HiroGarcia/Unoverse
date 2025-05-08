@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Player {
   final String playerId;
   final String name;
@@ -27,6 +29,20 @@ class Player {
       totalMatches = map['totalMatches'],
       totalMatchesPlayed = map['totalMatchesPlayed'],
       pointsHistory = Map<String, int>.from(map['pointsHistory'] ?? {});
+
+  factory Player.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data();
+    if (data == null || data is! Map<String, dynamic>) {
+      return Player(
+        playerId: '',
+        name: '',
+        totalScore: 0,
+        totalMatches: 0,
+        totalMatchesPlayed: 0,
+      );
+    }
+    return Player.fromMap(data);
+  }
 
   Map<String, dynamic> toMap() {
     return {

@@ -1,41 +1,27 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:unoverse/data/services/player_provider.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
 
-import '../../../data/services/player_service.dart';
 import '../../../domain/entity/group_entity.dart';
-import '../../../domain/entity/player_entity.dart';
 import '../../widgets/show_form_modal.dart';
 
-class GroupPage extends StatefulWidget {
+class GroupPage extends StatelessWidget {
   final Group group;
   const GroupPage({required this.group, super.key});
 
   @override
-  State<GroupPage> createState() => _GroupScreenState();
-}
-
-class _GroupScreenState extends State<GroupPage> {
-  List<Player> listPlayer = [];
-
-  PlayerService playerService = PlayerService();
-
-  @override
-  void initState() {
-    refresh();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    context.read<PlayerProvider>().listenToPlayers(group.groupId);
+    final listPlayer = context.watch<PlayerProvider>().players;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.group.name)),
+      appBar: AppBar(title: Text(group.name)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showFormModal(
             context: context,
             type: EnumType.player,
-            groupId: widget.group.groupId,
+            groupId: group.groupId,
           );
         },
         child: Icon(Icons.add),
@@ -82,18 +68,5 @@ class _GroupScreenState extends State<GroupPage> {
                 ),
               ),
     );
-  }
-
-  refresh() async {
-    try {
-      listPlayer = await playerService.readPlayer(
-        groupId: widget.group.groupId,
-      );
-      setState(() {});
-    } on FirebaseException catch (e) {
-      print('Erro: ${e.code}');
-    } catch (e) {
-      print('Erro: $e');
-    }
   }
 }
