@@ -6,10 +6,9 @@ import 'package:unoverse/presentation/widgets/group_card.dart';
 import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
 import '../../../data/services/group_provider.dart';
-import '../../../data/services/user_service.dart';
+import '../../../data/services/user_provider.dart';
+
 import '../../../domain/entity/enum_type.dart';
-import '../../../domain/entity/group_entity.dart';
-import '../../../domain/entity/user_entity.dart';
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -20,31 +19,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserService userService = UserService();
-
-  UserEntity user = UserEntity(groupsId: []);
-
   @override
-  void initState() {
-    super.initState();
-    initData();
-  }
-
-  void initData() async {
-    user = await userService.readUser().then((user) {
+  Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
+    final groups = context.watch<GroupProvider>().groups;
+    if (user == null) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (groups.isEmpty && user.groupsId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Provider.of<GroupProvider>(
           context,
           listen: false,
         ).loadGroups(user.groupsId);
       });
-      return user;
-    });
-  }
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    final List<Group> groups = context.watch<GroupProvider>().groups;
     return Scaffold(
       appBar: AppBar(
         title: Text('Unoverse Groups'),
@@ -57,7 +47,7 @@ class _HomePageState extends State<HomePage> {
               print('Avatar: ${widget.user.photoURL}');
               print('Grupos: ${user.groupsId}');
               print('Name Group: ${groups[0].name}');
-              refresh();
+              print(groups.length);
             },
             icon: Icon(Icons.mode_edit_sharp),
             color: Colors.black,
@@ -99,14 +89,5 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
     );
-  }
-
-  refresh() async {
-    final UserEntity updatedUser = await userService.readUser();
-
-    Provider.of<GroupProvider>(
-      context,
-      listen: false,
-    ).loadGroups(updatedUser.groupsId);
   }
 }

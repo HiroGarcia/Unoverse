@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/group_provider.dart';
 import 'package:unoverse/data/services/group_service.dart';
+import 'package:unoverse/data/services/user_provider.dart';
 import 'package:unoverse/firebase_options.dart';
 
 import 'presentation/pages/home/home_page.dart';
@@ -15,8 +16,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProxyProvider<UserProvider, GroupProvider>(
           create: (_) => GroupProvider(groupService: GroupService()),
+          update: (_, userProvider, groupProvider) {
+            final groupIds = userProvider.user?.groupsId ?? [];
+            groupProvider!.loadGroups(groupIds); // força a atualização
+            return groupProvider;
+          },
         ),
       ],
       child: UnoverseApp(),
@@ -60,7 +67,12 @@ class RoteadorTelas extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else {
           if (snapshot.hasData) {
-            return HomePage(user: snapshot.data!);
+            final user = snapshot.data!;
+            Provider.of<UserProvider>(
+              context,
+              listen: false,
+            ).listenUser(user.uid);
+            return HomePage(user: user);
           } else {
             return const LoginPage();
           }
