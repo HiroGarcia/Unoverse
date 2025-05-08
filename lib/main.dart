@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:unoverse/data/services/group_provider.dart';
+import 'package:unoverse/data/services/group_service.dart';
 import 'package:unoverse/firebase_options.dart';
 
 import 'presentation/pages/home/home_page.dart';
@@ -9,7 +12,16 @@ import 'presentation/pages/auth/login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const UnoverseApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => GroupProvider(groupService: GroupService()),
+        ),
+      ],
+      child: UnoverseApp(),
+    ),
+  );
 }
 
 class UnoverseApp extends StatelessWidget {
@@ -42,7 +54,7 @@ class RoteadorTelas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseAuth.instance.userChanges(),
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

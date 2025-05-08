@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:unoverse/presentation/pages/group/group_page.dart';
 import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
+import '../../../data/services/group_provider.dart';
 import '../../../data/services/group_service.dart';
 import '../../../data/services/user_service.dart';
 import '../../../domain/entity/enum_type.dart';
@@ -28,9 +30,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    refresh();
-
     super.initState();
+    initData();
+  }
+
+  void initData() async {
+    user = await refresh();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GroupProvider>(
+        context,
+        listen: false,
+      ).loadGroups(user.groupsId);
+    });
   }
 
   @override
@@ -118,7 +129,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   refresh() async {
-    user = await userService.readUser();
+    UserEntity user = await userService.readUser();
 
     try {
       if (user.groupsId.isNotEmpty) {
@@ -135,5 +146,6 @@ class _HomePageState extends State<HomePage> {
       print('Erro ao carregar grupos: $e');
     }
     setState(() {});
+    return user;
   }
 }
