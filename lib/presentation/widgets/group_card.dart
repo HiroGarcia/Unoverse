@@ -16,8 +16,10 @@ class GroupCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) => GroupPage(group: group)),
         );
       },
+      onLongPress: () {},
       child: Card(
-        color: Colors.amber,
+        elevation: 2,
+        color: Colors.blueGrey[200],
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

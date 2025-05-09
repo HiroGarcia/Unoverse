@@ -74,12 +74,39 @@ class HomePage extends StatelessWidget {
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
+                    mainAxisSpacing: 3,
+                    crossAxisSpacing: 3,
+                    childAspectRatio: 0.6437,
                   ),
-                  itemCount: groups.length,
+                  itemCount: groups.length + 1,
                   itemBuilder: (context, index) {
-                    final group = groups[index];
-
-                    return GroupCard(group: group);
+                    if (index < groups.length) {
+                      final group = groups[index];
+                      return GroupCard(group: group);
+                    } else {
+                      return Card(
+                        color: Colors.blueGrey[50],
+                        elevation: 2,
+                        margin: const EdgeInsets.all(32.0),
+                        shape: CircleBorder(),
+                        child: InkWell(
+                          onTap: null,
+                          borderRadius: BorderRadius.circular(14),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  size: 60,
+                                  color: Colors.black38,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),

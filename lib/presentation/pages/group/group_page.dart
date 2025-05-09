@@ -44,7 +44,7 @@ class GroupPage extends StatelessWidget {
                   itemCount: listPlayer.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      color: Colors.amber,
+                      color: Colors.blueGrey[200],
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
