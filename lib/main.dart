@@ -7,13 +7,16 @@ import 'package:unoverse/data/services/group_service.dart';
 import 'package:unoverse/data/services/player_provider.dart';
 import 'package:unoverse/data/services/user_provider.dart';
 import 'package:unoverse/firebase_options.dart';
+import 'package:unoverse/presentation/pages/auth/auth_page.dart';
+import 'package:unoverse/themes/dark_mode.dart';
+import 'package:unoverse/themes/light_mode.dart';
 
 import 'presentation/pages/home/home_page.dart';
-import 'presentation/pages/auth/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(
     MultiProvider(
       providers: [
@@ -41,18 +44,9 @@ class UnoverseApp extends StatelessWidget {
     return MaterialApp(
       title: 'Unoverse Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        appBarTheme: AppBarTheme(
-          centerTitle: true,
-          backgroundColor: Colors.blue[100],
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.blue[100],
-        ),
-      ),
+      theme: lightMode,
+      darkTheme: darkMode,
       home: const RoteadorTelas(),
-      routes: {'loginScreen': (context) => LoginPage()},
     );
   }
 }
@@ -76,7 +70,7 @@ class RoteadorTelas extends StatelessWidget {
             ).listenUser(user.uid);
             return HomePage(userAuth: user);
           } else {
-            return const LoginPage();
+            return AuthPage();
           }
         }
       },

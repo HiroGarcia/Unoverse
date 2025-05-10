@@ -1,164 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:unoverse/presentation/widgets/my_button.dart';
+import 'package:unoverse/presentation/widgets/my_textfield.dart';
 
 import '../../controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final void Function()? togglePages;
+  const LoginPage({super.key, required this.togglePages});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  final AuthController authController = AuthController();
+  final authController = AuthController();
 
   final _formKey = GlobalKey<FormState>();
-
-  bool isLogin = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(40.0),
         child: Center(
-          child: Container(
-            height: 700,
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(24),
-            ),
-            padding: EdgeInsets.all(32),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Welcome to Unoverse'),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        labelText: 'E-mail',
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value == "") {
-                          return "E-mail invalid";
-                        }
-                        if (!value.contains("@") ||
-                            !value.contains(".") ||
-                            value.length < 4) {
-                          return "E-mail invalid";
-                        }
-                        return null;
-                      },
-                    ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'U N O V E R S E',
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  TextFormField(
-                    obscureText: true,
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      labelText: 'Password',
-                    ),
+                ),
+                Text(
+                  'L E T \'S   G O   P L A Y I N G',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: MyTextfield(
+                    controller: emailController,
+                    labelText: 'Email',
+                    obscureText: false,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value == null || value.length < 6) {
-                        return "Password must have at least 6 characters";
+                      if (value == null || value == "") {
+                        return "Email invalid";
+                      }
+                      if (!value.contains("@") ||
+                          !value.contains(".") ||
+                          value.length < 4) {
+                        return "Email invalid";
                       }
                       return null;
                     },
                   ),
-                  Visibility(
-                    visible: !isLogin,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: TextFormField(
-                            controller: _confirmController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              label: Text("Confirm password"),
-                            ),
-                            validator: (value) {
-                              if (value != _passwordController.text) {
-                                return "Passwords must be the same";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            label: Text("Name"),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.length < 3) {
-                              return "Name must have at least 3 characters.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
+                ),
+                MyTextfield(
+                  controller: passwordController,
+                  labelText: 'Password',
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.length < 6) {
+                      return "Password must have at least 6 characters";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (isLogin) {
-                            authController.loginUser(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              context: context,
-                            );
-                          } else {
-                            authController.registerUser(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              name: _nameController.text,
-                              context: context,
-                            );
-                          }
-                        }
-                      },
-                      child: Text((isLogin) ? 'Login' : 'Sign up'),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isLogin = !isLogin;
-                      });
+                  ],
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: MyButton(
+                    text: 'Login',
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        authController.loginUser(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          context: context,
+                        );
+                      }
                     },
-                    child: Text(
-                      (isLogin)
-                          ? 'Don\'t have acoount? Sing up'
-                          : 'Already have an account? Sign in',
-                    ),
                   ),
-                ],
-              ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Don\'t have an acoount? ',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: widget.togglePages,
+                      child: Text(
+                        'Sign in',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
