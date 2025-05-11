@@ -18,8 +18,9 @@ class GroupCard extends StatelessWidget {
       },
       onLongPress: () {},
       child: Card(
-        elevation: 2,
-        color: Colors.blueGrey[200],
+        elevation: 3,
+        // color: Colors.blueGrey[200],
+        color: Theme.of(context).colorScheme.secondary,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -27,10 +28,11 @@ class GroupCard extends StatelessWidget {
               Text(
                 group.name,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-              const SizedBox(height: 8),
-              Text('ID: ${group.groupId}'),
             ],
           ),
         ),

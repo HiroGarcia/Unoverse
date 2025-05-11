@@ -36,7 +36,7 @@ class GroupPage extends StatelessWidget {
                 ),
               )
               : Container(
-                color: Colors.blue[50],
+                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
@@ -44,7 +44,7 @@ class GroupPage extends StatelessWidget {
                   itemCount: listPlayer.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      color: Colors.blueGrey[200],
+                      color: Theme.of(context).colorScheme.secondary,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

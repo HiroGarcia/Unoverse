@@ -8,11 +8,5 @@ ThemeData lightMode = ThemeData(
     inversePrimary: Colors.grey.shade900,
   ),
   scaffoldBackgroundColor: Colors.grey.shade300,
-  //  appBarTheme: AppBarTheme(
-  //         centerTitle: true,
-  //         backgroundColor: Colors.blue[100],
-  //       ),
-  //       floatingActionButtonTheme: FloatingActionButtonThemeData(
-  //         backgroundColor: Colors.blue[100],
-  //       ),
+  appBarTheme: AppBarTheme(centerTitle: true),
 );

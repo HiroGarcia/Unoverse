@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
         ).loadGroups(user.groupsId);
       });
     }
-
+    FirebaseAuth sair = FirebaseAuth.instance;
     return Scaffold(
       appBar: AppBar(
         title: Text('Unoverse Groups'),
@@ -43,9 +43,10 @@ class HomePage extends StatelessWidget {
               print('Grupos: ${user.groupsId}');
               print('Name Group: ${groups[0].name}');
               print(groups.length);
+              sair.signOut();
             },
             icon: Icon(Icons.mode_edit_sharp),
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ],
       ),
@@ -70,7 +71,7 @@ class HomePage extends StatelessWidget {
                 ),
               )
               : Container(
-                color: Colors.blue[50],
+                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
@@ -85,7 +86,8 @@ class HomePage extends StatelessWidget {
                       return GroupCard(group: group);
                     } else {
                       return Card(
-                        color: Colors.blueGrey[50],
+                        // color: Colors.blueGrey[50],
+                        color: Theme.of(context).colorScheme.secondary,
                         elevation: 2,
                         margin: const EdgeInsets.all(32.0),
                         shape: CircleBorder(),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:unoverse/presentation/widgets/my_textfield.dart';
 
 import '../../domain/entity/enum_type.dart';
 import '../controllers/modal_controller.dart';
@@ -55,9 +55,10 @@ showFormModal({
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               SizedBox(height: 24),
-              TextFormField(
+              MyTextfield(
                 controller: nameController,
-                decoration: InputDecoration(label: Text("Nome do $titleType")),
+                labelText: 'Nome do $titleType',
+                obscureText: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nome é obrigatório';
@@ -68,14 +69,15 @@ showFormModal({
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               if (type == EnumType.group) ...[
                 Text('Score'),
-                TextFormField(
+                const SizedBox(height: 16),
+                MyTextfield(
                   controller: primeiroController,
+                  labelText: 'Pontuação 1º lugar',
+                  obscureText: false,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Pontuação 1º lugar'),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Pontuação é obrigatória';
@@ -83,11 +85,12 @@ showFormModal({
                     return null;
                   },
                 ),
-                TextFormField(
+                const SizedBox(height: 10),
+                MyTextfield(
                   controller: segundoController,
+                  labelText: 'Pontuação 2º lugar',
+                  obscureText: false,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Pontuação 2º lugar'),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Pontuação é obrigatória';
@@ -95,11 +98,12 @@ showFormModal({
                     return null;
                   },
                 ),
-                TextFormField(
+                const SizedBox(height: 10),
+                MyTextfield(
                   controller: terceiroController,
+                  labelText: 'Pontuação 3º lugar',
+                  obscureText: false,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Pontuação 3º lugar'),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Pontuação é obrigatória';
@@ -108,12 +112,11 @@ showFormModal({
                   },
                 ),
               ] else if (type == EnumType.player) ...[
-                TextFormField(
+                MyTextfield(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email do Jogador (Opcional)',
-                  ),
+                  labelText: 'Email do Jogador (Opcional)',
+                  obscureText: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return null;
@@ -125,12 +128,12 @@ showFormModal({
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
+                const SizedBox(height: 10),
+                MyTextfield(
                   controller: initialScoreController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Pontuação Inicial'),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  labelText: 'Pontuação Inicial',
+                  obscureText: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Pontuação inicial é obrigatória';
