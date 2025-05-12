@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:unoverse/presentation/widgets/my_textfield.dart';
 
 import '../../domain/entity/enum_type.dart';
+import '../../domain/entity/group_entity.dart';
+import '../../domain/entity/player_entity.dart';
 import '../controllers/modal_controller.dart';
+import 'my_textfield.dart';
 
 showFormModal({
   required BuildContext context,
   String? uid,
   String? groupId,
+  Group? group,
+  Player? player,
   required EnumType type,
 }) {
   TextEditingController nameController = TextEditingController();
@@ -22,14 +26,34 @@ showFormModal({
   );
 
   ModalController modalController = ModalController();
-  String titleType = '';
-
+  String title = '';
+  String nameType = '';
   if (type == EnumType.group) {
-    titleType = 'Grupo';
+    nameType = 'Grupo';
+    if (group == null) {
+      title = 'Adicionar Grupo';
+    } else {
+      title = 'Editar Grupo';
+      nameController.text = group.name;
+      primeiroController.text = group.config['primeiro'].toString();
+      segundoController.text = group.config['segundo'].toString();
+      terceiroController.text = group.config['terceiro'].toString();
+    }
   } else if (type == EnumType.player) {
-    titleType = 'Jogador';
+    nameType = 'Jogador';
+    if (player == null) {
+      title = 'Adicionar Jogador';
+    } else {
+      title = 'Editar Jogador';
+      nameController.text = player.name;
+    }
   } else if (type == EnumType.member) {
-    titleType = 'Membro';
+    nameType = 'Membro';
+    if (group == null) {
+      title = 'Adicionar Membro';
+    } else {
+      title = 'Editar Membro';
+    }
   }
 
   final formKey = GlobalKey<FormState>();
@@ -50,14 +74,11 @@ showFormModal({
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Adicionar $titleType',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              Text(title, style: Theme.of(context).textTheme.headlineMedium),
               SizedBox(height: 24),
               MyTextfield(
                 controller: nameController,
-                labelText: 'Nome do $titleType',
+                labelText: 'Nome do $nameType',
                 obscureText: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -173,6 +194,8 @@ showFormModal({
                             members: membersList,
                             role: role,
                             config: config,
+                            groupUid: (group != null) ? group.groupId : null,
+                            createIn: (group != null) ? group.createIn : null,
                           );
                           Navigator.pop(context);
                         } else if (type == EnumType.player) {

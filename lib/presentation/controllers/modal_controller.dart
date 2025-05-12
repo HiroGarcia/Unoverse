@@ -14,15 +14,17 @@ class ModalController {
     required List<String> members,
     required Map<String, String> role,
     required Map<String, int> config,
+    String? groupUid,
+    DateTime? createIn,
   }) {
     groupService.addGroup(
       group: Group(
-        groupId: Uuid().v1(),
+        groupId: (groupUid == null) ? Uuid().v1() : groupUid,
         name: name,
         createBy: uid,
         members: members,
         role: role,
-        createIn: DateTime.now(),
+        createIn: (createIn == null) ? DateTime.now() : createIn,
         config: config,
       ),
     );

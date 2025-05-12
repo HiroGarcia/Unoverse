@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:provider/provider.dart';
+import 'package:unoverse/domain/entity/enum_type.dart';
 import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
+import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
 import '../../domain/entity/group_entity.dart';
 import '../pages/group/group_page.dart';
 
 class GroupCard extends StatefulWidget {
   final Group group;
-  const GroupCard({super.key, required this.group});
+  final String uid;
+  const GroupCard({super.key, required this.group, required this.uid});
 
   @override
   State<GroupCard> createState() => _GroupCardState();
@@ -82,7 +85,14 @@ class _GroupCardState extends State<GroupCard> {
       color: Theme.of(context).colorScheme.secondary,
       child: Center(
         child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            showFormModal(
+              context: context,
+              type: EnumType.group,
+              group: widget.group,
+              uid: widget.uid,
+            );
+          },
           icon: Icon(Icons.edit),
           label: Text('Editar'),
           style: ElevatedButton.styleFrom(

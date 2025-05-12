@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       if (index < groups.length) {
                         final group = groups[index];
-                        return GroupCard(group: group);
+                        return GroupCard(group: group, uid: userAuth.uid);
                       } else {
                         return Card(
                           // color: Colors.blueGrey[50],
