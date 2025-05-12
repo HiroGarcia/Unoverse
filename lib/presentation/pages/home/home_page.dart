@@ -9,6 +9,7 @@ import '../../../data/services/group_provider.dart';
 import '../../../data/services/user_provider.dart';
 
 import '../../../domain/entity/enum_type.dart';
+import '../../controllers/card_flip_controller.dart';
 
 class HomePage extends StatelessWidget {
   final User userAuth;
@@ -30,88 +31,103 @@ class HomePage extends StatelessWidget {
       });
     }
     FirebaseAuth sair = FirebaseAuth.instance;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Unoverse Groups'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              print('--------------');
-              print('Nome: ${userAuth.displayName}');
-              print('Email: ${user.email}');
-              print('Avatar: ${userAuth.photoURL}');
-              print('Grupos: ${user.groupsId}');
-              print('Name Group: ${groups[0].name}');
-              print(groups.length);
-              sair.signOut();
-            },
-            icon: Icon(Icons.mode_edit_sharp),
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showFormModal(
-            context: context,
-            uid: userAuth.uid,
-            type: EnumType.group,
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-      drawer: Drawer(),
-      body:
-          (user.groupsId.isEmpty)
-              ? const Center(
-                child: Text(
-                  "Nenhuma lista ainda.\nVamos criar a primeira?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
-              : Container(
-                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    mainAxisSpacing: 3,
-                    crossAxisSpacing: 3,
-                    childAspectRatio: 0.6437,
+    return GestureDetector(
+      onTap: () {
+        context.read<CardFlipController>().reset();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Unoverse Groups'),
+
+          actions: [
+            IconButton(
+              onPressed: () {
+                handleInteractionOrReset(
+                  context: context,
+                  onValid: () {
+                    print('--------------');
+                    print('Nome: ${userAuth.displayName}');
+                    print('Email: ${user.email}');
+                    print('Avatar: ${userAuth.photoURL}');
+                    print('Grupos: ${user.groupsId}');
+                    print('Name Group: ${groups[0].name}');
+                    print(groups.length);
+                    sair.signOut();
+                  },
+                );
+              },
+              icon: Icon(Icons.mode_edit_sharp),
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            handleInteractionOrReset(
+              context: context,
+              onValid:
+                  () => showFormModal(
+                    context: context,
+                    uid: userAuth.uid,
+                    type: EnumType.group,
                   ),
-                  itemCount: groups.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index < groups.length) {
-                      final group = groups[index];
-                      return GroupCard(group: group);
-                    } else {
-                      return Card(
-                        // color: Colors.blueGrey[50],
-                        color: Theme.of(context).colorScheme.secondary,
-                        elevation: 2,
-                        margin: const EdgeInsets.all(32.0),
-                        shape: CircleBorder(),
-                        child: InkWell(
-                          onTap: null,
-                          borderRadius: BorderRadius.circular(14),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  size: 60,
-                                  color: Colors.black38,
-                                ),
-                              ],
+            );
+          },
+          child: Icon(Icons.add),
+        ),
+        drawer: Drawer(),
+        body:
+            (user.groupsId.isEmpty)
+                ? const Center(
+                  child: Text(
+                    "Nenhuma lista ainda.\nVamos criar a primeira?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                )
+                : Container(
+                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      mainAxisSpacing: 3,
+                      crossAxisSpacing: 3,
+                      childAspectRatio: 0.6437,
+                    ),
+                    itemCount: groups.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < groups.length) {
+                        final group = groups[index];
+                        return GroupCard(group: group);
+                      } else {
+                        return Card(
+                          // color: Colors.blueGrey[50],
+                          color: Theme.of(context).colorScheme.secondary,
+                          elevation: 2,
+                          margin: const EdgeInsets.all(32.0),
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            onTap: null,
+                            borderRadius: BorderRadius.circular(14),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    size: 60,
+                                    color: Colors.black38,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
+      ),
     );
   }
 }
