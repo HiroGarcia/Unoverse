@@ -1,41 +1,5 @@
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import '../../domain/entity/group_entity.dart';
-// import '../services/group_service.dart';
-
-// class GroupProvider with ChangeNotifier {
-//   final GroupService groupService;
-
-//   List<Group> _groups = [];
-//   List<Group> get groups => _groups;
-
-//   bool _isLoading = false;
-//   bool get isLoading => _isLoading;
-
-//   GroupProvider({required this.groupService});
-
-//   Future<void> loadGroups(List<String> groupIds) async {
-//     _isLoading = true;
-//     notifyListeners();
-
-//     try {
-//       if (groupIds.isNotEmpty) {
-//         _groups = await groupService.readGroup(groupId: groupIds);
-//       } else {
-//         _groups = [];
-//       }
-//     } catch (e) {
-//       print("Erro ao carregar grupos: $e");
-//     }
-
-//     _isLoading = false;
-//     notifyListeners();
-//   }
-// }
-
-import 'dart:async'; // Importe para StreamSubscription
+import 'dart:async';
 import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart'; // Não precisa de material.dart se for só ChangeNotifier
 import '../../domain/entity/group_entity.dart';
 import '../services/group_service.dart';
 
@@ -48,8 +12,10 @@ class GroupProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // Armazena a assinatura do stream
-  StreamSubscription<List<Group>>? _groupsSubscription;
+  Map<String, String> _failedGroupsErrors = {};
+  Map<String, String> get failedGroupsErrors => _failedGroupsErrors;
+
+  StreamSubscription<List<GroupFetchResult>>? _groupsResultsSubscription;
 
   // Armazena a lista de IDs que está sendo atualmente "escutada"
   List<String> _currentlyStreamingGroupIds = [];
@@ -64,51 +30,106 @@ class GroupProvider with ChangeNotifier {
     if (listsDiffer) {
       print("Lista de groupIds mudou. Atualizando stream.");
       // Cancelar a assinatura antiga se existir
-      _groupsSubscription?.cancel();
-      _groupsSubscription = null; // Limpa a referência
+      _groupsResultsSubscription?.cancel();
+      _groupsResultsSubscription = null; // Limpa a referência
 
       _currentlyStreamingGroupIds =
           newGroupIds; // Atualiza a lista que estamos "escutando"
 
+      // Limpa a lista de grupos e possíveis erros anteriores
+      _groups = [];
       // Se a nova lista de IDs não estiver vazia, inicie a nova escuta
       if (newGroupIds.isNotEmpty) {
+        print(
+          "GroupProvider: Iniciando nova escuta de stream de resultados para ${newGroupIds.length} IDs.",
+        );
         // Iniciar carregamento (opcional, pode remover se a UI lidar com a lista vazia inicial)
         _isLoading = true;
         notifyListeners(); // Notifica que o carregamento começou
 
-        _groupsSubscription = groupService
-            .streamGroups(newGroupIds)
+        // Chame o novo método do Service que retorna Stream<List<DocumentSnapshot>>
+        _groupsResultsSubscription = groupService
+            .streamGroupResults(newGroupIds)
             .listen(
-              (listOfGroups) {
-                // Este callback é chamado toda vez que qualquer grupo na lista muda
+              (listOfResults) {
+                // Este callback é chamado toda vez que qualquer snapshot na lista muda ou falha
                 print(
-                  "Stream de grupos atualizado. ${listOfGroups.length} grupos recebidos.",
+                  "GroupProvider: Stream de snapshots atualizado. Recebidos ${listOfResults.length} snapshots.",
                 );
-                _groups =
-                    listOfGroups; // Atualiza a lista de grupos no Provider
-                _isLoading =
-                    false; // Carregamento terminou (pelo menos o primeiro evento)
+
+                List<Group> loadedGroups = [];
+                Map<String, String> currentFailedGroups =
+                    {}; // Para rastrear falhas neste ciclo
+
+                // Itere sobre a lista de snapshots
+                for (var result in listOfResults) {
+                  if (result.isSuccess) {
+                    // Se o resultado é um sucesso, adicione o grupo à lista
+                    loadedGroups.add(
+                      result.group!,
+                    ); // 'group!' é seguro porque isSuccess verifica null
+                  } else if (result.isFailure) {
+                    // Se o resultado é uma falha (erro de permissão, etc.)
+                    print(
+                      "GroupProvider: Grupo ${result.groupId} falhou ao carregar: ${result.error}",
+                    );
+                    currentFailedGroups[result.groupId] =
+                        result.error.toString(); // Armazena o erro
+                  } else if (result.isNotFound) {
+                    // Se o documento não foi encontrado no Firestore
+                    print(
+                      "GroupProvider: Grupo ${result.groupId} não encontrado no Firestore.",
+                    );
+                    currentFailedGroups[result.groupId] =
+                        "Não encontrado"; // Opcional: armazena status
+                  }
+                }
+
+                _groups = loadedGroups;
+                _isLoading = false;
+
+                _failedGroupsErrors = currentFailedGroups;
+
+                if (_groups.isEmpty &&
+                    _currentlyStreamingGroupIds.isNotEmpty &&
+                    !isLoading) {
+                  print(
+                    "GroupProvider: Nenhum grupo carregado dos IDs fornecidos. Possível problema de permissão para todos.",
+                  );
+                }
+
                 notifyListeners(); // Notifica widgets que a lista de grupos mudou
               },
-              onError: (error) {
-                print("Erro no listener do stream de grupos: $error");
+              onError: (error, stackTrace) {
+                // Este onError só é chamado para erros que o stream combinado não tratou individualmente
+                print(
+                  "GroupProvider: Erro fatal no listener do stream de grupos: $error",
+                );
+                print(stackTrace); // Opcional: logar o stack trace
                 _isLoading = false; // Carregamento terminou com erro
-                // Opcional: Limpar lista de grupos ou definir estado de erro
-                _groups = []; // Limpa a lista em caso de erro no stream
-                notifyListeners(); // Notifica que houve um erro
+                _groups =
+                    []; // Limpa a lista de grupos em caso de erro fatal no stream
+                _failedGroupsErrors = {
+                  'fatal': error.toString(),
+                }; // Opcional: sinaliza erro fatal
+                notifyListeners(); // Notifica que houve um erro fatal
               },
               // optional: onDone
             );
       } else {
         // Se a nova lista de IDs estiver vazia, limpe a lista de grupos e notifique
-        print("Nova lista de groupIds está vazia. Limpando lista de grupos.");
+        print(
+          "GroupProvider: Nova lista de groupIds está vazia. Limpando lista de grupos e cancelando stream.",
+        );
         _groups = [];
-        _isLoading = false;
+        _isLoading = false; // Ensure loading state is false
+        _failedGroupsErrors = {}; // Limpa erros
         notifyListeners();
       }
     } else {
-      //print("Lista de groupIds não mudou. Mantendo stream atual.");
-      // Nada a fazer se a lista de IDs for a mesma
+      print(
+        "GroupProvider: Lista de groupIds não mudou. Mantendo stream atual.",
+      );
     }
   }
 
@@ -116,36 +137,9 @@ class GroupProvider with ChangeNotifier {
   @override
   void dispose() {
     print("GroupProvider: Cancelando assinatura do stream.");
-    _groupsSubscription
+    _groupsResultsSubscription
         ?.cancel(); // Cancela a assinatura para evitar vazamentos de memória
+    _groupsResultsSubscription = null; // Limpa a referência
     super.dispose();
   }
-
-  // Remova ou adapte o método loadGroups baseado em Future, pois a leitura
-  // principal agora será via stream. Se você ainda precisar de uma leitura
-  // única em algum lugar, mantenha o método readGroup no GroupService
-  // e chame ele diretamente onde necessário (fora do fluxo principal de display).
-  //
-  // Exemplo: Se precisar carregar uma lista de grupos UMA ÚNICA VEZ para
-  // alguma tela ou funcionalidade específica que não precise de real-time.
-  // Future<void> loadGroupsOnce(List<String> groupIds) async {
-  //    _isLoading = true;
-  //    notifyListeners();
-  //    try {
-  //      _groups = await groupService.readGroup(groupId: groupIds);
-  //    } catch (e) {
-  //      print("Erro ao carregar grupos (one-time): $e");
-  //    }
-  //    _isLoading = false;
-  //    notifyListeners();
-  // }
-
-  // Mantenha o método loadGroups atual que você mostrou se ele for
-  // usado APENAS internamente pelo updateUserGroupIds para iniciar a escuta,
-  // mas o nome updateUserGroupIds talvez seja mais claro para o que ele faz.
-  // Vamos manter updateUserGroupIds chamando streamGroups e gerenciando a assinatura.
-  // Portanto, o método loadGroups como estava (Future) pode ser removido ou adaptado.
-
-  // Exemplo: Remover o método loadGroups Future se ele não for mais usado externamente
-  // Future<void> loadGroups(List<String> groupIds) async { /* Removido */ }
 }

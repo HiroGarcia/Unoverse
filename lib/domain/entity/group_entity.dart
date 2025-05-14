@@ -42,3 +42,17 @@ class Group {
     };
   }
 }
+
+// Class feita para controle de erro do multiStream
+class GroupFetchResult {
+  final String groupId; // O ID do grupo que tentamos buscar
+  final Group? group; // O objeto Group se a busca foi bem-sucedida
+  final Object? error; // O erro se a busca falhou
+
+  GroupFetchResult({required this.groupId, this.group, this.error});
+
+  // Propriedades convenientes para verificar o estado
+  bool get isSuccess => group != null && error == null;
+  bool get isFailure => error != null;
+  bool get isNotFound => group == null && error == null;
+}
