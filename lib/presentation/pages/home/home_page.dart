@@ -22,14 +22,6 @@ class HomePage extends StatelessWidget {
     if (user == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (groups.isEmpty && user.groupsId.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<GroupProvider>(
-          context,
-          listen: false,
-        ).loadGroups(user.groupsId);
-      });
-    }
     FirebaseAuth sair = FirebaseAuth.instance;
     return GestureDetector(
       onTap: () {

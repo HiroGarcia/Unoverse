@@ -6,16 +6,19 @@ class GroupService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<List<Group>> readGroup({required List<String> groupId}) async {
+    print(">>> loadGroups chamada <<<");
     List<Group> temp = [];
 
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await firestore
-            .collection("groups")
-            .where('groupId', whereIn: groupId)
-            .get();
+    for (var group in groupId) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await firestore.collection("groups").doc(group).get();
 
-    for (var doc in snapshot.docs) {
-      temp.add(Group.fromMap(doc.data()));
+      if (snapshot.exists) {
+        print("Lendo grupo com ID da lista: ${snapshot.id}");
+        temp.add(Group.fromMap(snapshot.data()!));
+      } else {
+        print("Grupo com ID $groupId da lista não encontrado.");
+      }
     }
     return temp;
   }

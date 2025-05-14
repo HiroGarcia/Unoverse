@@ -83,23 +83,37 @@ class _GroupCardState extends State<GroupCard> {
     return Card(
       elevation: 3,
       color: Theme.of(context).colorScheme.secondary,
-      child: Center(
-        child: ElevatedButton.icon(
-          onPressed: () {
-            showFormModal(
-              context: context,
-              type: EnumType.group,
-              group: widget.group,
-              uid: widget.uid,
-            );
-          },
-          icon: Icon(Icons.edit),
-          label: Text('Editar'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () {
+              showFormModal(
+                context: context,
+                type: EnumType.group,
+                group: widget.group,
+                uid: widget.uid,
+              );
+            },
+            icon: Icon(Icons.edit),
+            label: Text('Editar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+            ),
           ),
-        ),
+          SizedBox(height: 10),
+          ElevatedButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.delete),
+            label: Text('Excluir'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 99, 24, 18),
+              // backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.inversePrimary,
+            ),
+          ),
+        ],
       ),
     );
   }
