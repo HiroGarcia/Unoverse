@@ -28,7 +28,7 @@ void main() async {
           create: (_) => GroupProvider(groupService: GroupService()),
           update: (_, userProvider, groupProvider) {
             final groupIds = userProvider.user?.groupsId ?? [];
-            groupProvider!.loadGroups(groupIds);
+            groupProvider!.updateUserGroupIds(groupIds);
             return groupProvider;
           },
         ),
