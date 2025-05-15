@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 handleInteractionOrReset(
                   context: context,
-                  onValid: () {
+                  onValid: () async {
                     print('--------------');
                     print('Nome: ${userAuth.displayName}');
                     print('Email: ${user.email}');
@@ -87,7 +87,20 @@ class HomePage extends StatelessWidget {
                     print('Grupos: ${user.groupsId}');
                     print('Name Group: ${groups[0].name}');
                     print(groups.length);
-                    sair.signOut();
+                    try {
+                      Provider.of<GroupProvider>(
+                        context,
+                        listen: false,
+                      ).resetForSignOut();
+                      Provider.of<UserProvider>(
+                        context,
+                        listen: false,
+                      ).resetForSignOut();
+                      await sair.signOut();
+                      print("Sair.signOut() concluído.");
+                    } catch (e) {
+                      print("Erro durante o processo de logout: $e");
+                    }
                   },
                 );
               },

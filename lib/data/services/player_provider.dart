@@ -59,6 +59,13 @@ class PlayerProvider with ChangeNotifier {
     _playersSubscription?.cancel();
     _playersSubscription = null;
     _currentGroupId = null;
+    _players = [];
+    notifyListeners();
+  }
+
+  void resetForSignOut() {
+    print("PlayerProvider: Resetando estado no logout.");
+    stopListening();
   }
 
   Future<void> addPlayer(Player player, String groupId) async {

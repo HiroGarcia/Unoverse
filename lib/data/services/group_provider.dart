@@ -137,9 +137,18 @@ class GroupProvider with ChangeNotifier {
   @override
   void dispose() {
     print("GroupProvider: Cancelando assinatura do stream.");
-    _groupsResultsSubscription
-        ?.cancel(); // Cancela a assinatura para evitar vazamentos de memória
-    _groupsResultsSubscription = null; // Limpa a referência
+    resetForSignOut();
     super.dispose();
+  }
+
+  void resetForSignOut() {
+    print("GroupProvider: Resetando estado no logout.");
+    _groupsResultsSubscription?.cancel();
+    _groupsResultsSubscription = null;
+    _currentlyStreamingGroupIds = [];
+    _groups = [];
+    _isLoading = false;
+    _failedGroupsErrors = {};
+    notifyListeners();
   }
 }

@@ -27,7 +27,12 @@ void main() async {
         ChangeNotifierProxyProvider<UserProvider, GroupProvider>(
           create: (_) => GroupProvider(groupService: GroupService()),
           update: (_, userProvider, groupProvider) {
-            final groupIds = userProvider.user?.groupsId ?? [];
+            print("ProxyProvider Update: Método 'update' chamado.");
+            final user = userProvider.user;
+            print(
+              "ProxyProvider Update: userProvider.user é null: ${user == null}",
+            );
+            final groupIds = user?.groupsId ?? [];
             groupProvider!.updateUserGroupIds(groupIds);
             return groupProvider;
           },
@@ -58,22 +63,41 @@ class RoteadorTelas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, authSnapshot) {
+        if (authSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else {
-          if (snapshot.hasData) {
-            final user = snapshot.data!;
-            Provider.of<UserProvider>(
-              context,
-              listen: false,
-            ).listenUser(user.uid);
-            return HomePage(userAuth: user);
+        }
+
+        final userProvider = context.watch<UserProvider>();
+        final userEntity = userProvider.user;
+
+        if (authSnapshot.hasData && authSnapshot.data != null) {
+          final firebaseUser = authSnapshot.data!;
+
+          Provider.of<UserProvider>(
+            context,
+            listen: false,
+          ).listenUser(firebaseUser.uid);
+
+          if (userEntity == null) {
+            print(
+              "RoteadorTelas: Auth OK, mas UserProvider user is null. Mostrando loading de usuário.",
+            );
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           } else {
-            return AuthPage();
+            print(
+              "RoteadorTelas: Auth OK, UserProvider user carregado. Mostrando HomePage.",
+            );
+
+            return HomePage(userAuth: firebaseUser);
           }
+        } else {
+          print("RoteadorTelas: Usuário não logado. Mostrando AuthPage.");
+          return AuthPage(); // Mostra a tela de login/cadastro
         }
       },
     );
