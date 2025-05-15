@@ -88,16 +88,17 @@ class HomePage extends StatelessWidget {
                     print('Name Group: ${groups[0].name}');
                     print(groups.length);
                     try {
-                      Provider.of<GroupProvider>(
-                        context,
-                        listen: false,
-                      ).resetForSignOut();
-                      Provider.of<UserProvider>(
-                        context,
-                        listen: false,
-                      ).resetForSignOut();
+                      print("Iniciando processo de logout.");
+                      // Provider.of<GroupProvider>(
+                      //   context,
+                      //   listen: false,
+                      // ).resetForSignOut();
+                      // Provider.of<UserProvider>(
+                      //   context,
+                      //   listen: false,
+                      // ).resetForSignOut();
                       await sair.signOut();
-                      print("Sair.signOut() concluído.");
+                      print("FirebaseAuth signOut() concluído.");
                     } catch (e) {
                       print("Erro durante o processo de logout: $e");
                     }

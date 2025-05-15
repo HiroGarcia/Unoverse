@@ -60,22 +60,16 @@ class PlayerProvider with ChangeNotifier {
     _playersSubscription = null;
     _currentGroupId = null;
     _players = [];
-    notifyListeners();
-  }
-
-  void resetForSignOut() {
-    print("PlayerProvider: Resetando estado no logout.");
-    stopListening();
   }
 
   Future<void> addPlayer(Player player, String groupId) async {
     await _playerService.addPlayer(player: player, groupId: groupId);
   }
 
-  @override
-  void dispose() {
-    print("PlayerProvider: Dispose chamado. Parando escuta.");
-    stopListening();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   print("PlayerProvider: Dispose chamado. Parando escuta.");
+  //   stopListening();
+  //   super.dispose();
+  // }
 }

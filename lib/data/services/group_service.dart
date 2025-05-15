@@ -126,7 +126,7 @@ class GroupService {
           .doc(group.groupId);
 
       batch.update(userDocRef, {
-        'groupIds': FieldValue.arrayUnion([group.groupId]),
+        'groupsId': FieldValue.arrayUnion([group.groupId]),
       });
 
       // Garante que o criador esteja no mapa role do grupo com role 'master' ao criar

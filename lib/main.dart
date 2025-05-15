@@ -24,17 +24,17 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => PlayerProvider()),
         ChangeNotifierProvider(create: (_) => CardFlipController()),
-        ChangeNotifierProxyProvider<UserProvider, GroupProvider>(
-          create: (_) => GroupProvider(groupService: GroupService()),
-          update: (_, userProvider, groupProvider) {
-            print("ProxyProvider Update: Método 'update' chamado.");
-            final user = userProvider.user;
-            print(
-              "ProxyProvider Update: userProvider.user é null: ${user == null}",
+        ChangeNotifierProvider<GroupProvider>(
+          create: (context) {
+            // Use listen: false para não criar dependência de reconstrução aqui
+            final userProvider = Provider.of<UserProvider>(
+              context,
+              listen: false,
             );
-            final groupIds = user?.groupsId ?? [];
-            groupProvider!.updateUserGroupIds(groupIds);
-            return groupProvider;
+            return GroupProvider(
+              groupService: GroupService(),
+              userProvider: userProvider,
+            );
           },
         ),
       ],
@@ -63,39 +63,51 @@ class RoteadorTelas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Observa o estado de autenticação do Firebase Auth
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, authSnapshot) {
+        // Nomeei o snapshot para clareza
+
         if (authSnapshot.connectionState == ConnectionState.waiting) {
+          // Mostra um indicador inicial enquanto o Firebase verifica o estado de autenticação pela primeira vez
           return const Center(child: CircularProgressIndicator());
         }
 
+        // 2. Observa o estado do UserProvider (para saber se os dados do usuário Entity foram carregados)
+        // Use 'watch' para que RoteadorTelas reconstrua quando o UserProvider chamar notifyListeners()
         final userProvider = context.watch<UserProvider>();
-        final userEntity = userProvider.user;
+        final userEntity =
+            userProvider
+                .user; // Pega o objeto UserEntity carregado pelo Provider
 
         if (authSnapshot.hasData && authSnapshot.data != null) {
-          final firebaseUser = authSnapshot.data!;
-
-          Provider.of<UserProvider>(
-            context,
-            listen: false,
-          ).listenUser(firebaseUser.uid);
+          // --- Usuário está AUTENTICADO pelo Firebase Auth (Passo 1 OK) ---
+          final firebaseUser = authSnapshot.data!; // O User do Firebase Auth
 
           if (userEntity == null) {
+            // --- Usuário AUTENTICADO, mas dados do UserProvider AINDA NÃO CARREGADOS (ou não encontrados) ---
+            // Mostra um indicador específico enquanto espera os dados do usuário Entity.
             print(
-              "RoteadorTelas: Auth OK, mas UserProvider user is null. Mostrando loading de usuário.",
+              "RoteadorTelas: Auth OK, mas UserProvider user is null. Mostrando loading de dados do usuário.",
             );
             return const Scaffold(
+              // Use Scaffold para um fundo consistente
               body: Center(child: CircularProgressIndicator()),
             );
           } else {
+            // --- Usuário AUTENTICADO E dados do UserProvider CARREGADOS (Passo 2 OK) ---
+            // O ProxyProvider já deve ter sido acionado pelo notifyListeners() do UserProvider
+            // quando userEntity foi setado. Agora é seguro mostrar a HomePage.
             print(
               "RoteadorTelas: Auth OK, UserProvider user carregado. Mostrando HomePage.",
             );
-
+            // Passe o Firebase User se a HomePage precisar dele (ela usará o UserProvider para o Entity)
             return HomePage(userAuth: firebaseUser);
           }
         } else {
+          // --- Usuário NÃO está AUTENTICADO pelo Firebase Auth ---
+          // O UserProvider já deve ter setado _user para null e chamado notifyListeners().
           print("RoteadorTelas: Usuário não logado. Mostrando AuthPage.");
           return AuthPage(); // Mostra a tela de login/cadastro
         }
