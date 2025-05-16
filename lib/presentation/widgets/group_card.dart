@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:provider/provider.dart';
+import 'package:unoverse/data/services/group_service.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
 import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
 import 'package:unoverse/presentation/widgets/show_form_modal.dart';
 
 import '../../domain/entity/group_entity.dart';
 import '../pages/group/group_page.dart';
+import 'my_alert_dialog.dart';
 
 class GroupCard extends StatefulWidget {
   final Group group;
@@ -104,12 +106,27 @@ class _GroupCardState extends State<GroupCard> {
           ),
           SizedBox(height: 10),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              showConfirmDeleteDialog(
+                context: context,
+                onConfirm: () async {
+                  try {
+                    await GroupService().deleteGroup(
+                      widget.group.groupId,
+                      widget.uid,
+                    );
+                    print('-----Grupo excluído com sucesso!-----');
+                    if (!mounted) return;
+                  } catch (e) {
+                    if (!mounted) return;
+                  }
+                },
+              );
+            },
             icon: Icon(Icons.delete),
             label: Text('Excluir'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 99, 24, 18),
-              // backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Theme.of(context).colorScheme.inversePrimary,
             ),
           ),

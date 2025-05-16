@@ -157,7 +157,7 @@ class GroupService {
 
     // Adiciona o groupId na lista do usuário
     batch.update(userDocRef, {
-      'groupIds': FieldValue.arrayUnion([groupId]),
+      'groupsId': FieldValue.arrayUnion([groupId]),
     });
 
     // Adiciona o role do usuário no mapa role do grupo
@@ -187,7 +187,7 @@ class GroupService {
 
     // Remove o groupId da lista do usuário
     batch.update(userDocRef, {
-      'groupIds': FieldValue.arrayRemove([groupId]),
+      'groupsId': FieldValue.arrayRemove([groupId]),
     });
 
     // Remove a chave do usuário do mapa role do grupo
@@ -238,6 +238,49 @@ class GroupService {
       rethrow;
     } catch (e) {
       print("Erro inesperado ao remover membro: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGroup(String groupId, String userUid) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await firestore.collection("groups").doc(groupId).get();
+
+      if (!snapshot.exists) {
+        throw Exception("Grupo não encontrado.");
+      }
+
+      final data = snapshot.data();
+      final roleMap = data?['role'] as Map<String, dynamic>?;
+
+      if (roleMap == null || roleMap[userUid] != 'master') {
+        throw Exception("Apenas o usuário master pode excluir o grupo.");
+      }
+
+      WriteBatch batch = firestore.batch();
+
+      DocumentReference groupDocRef = firestore
+          .collection("groups")
+          .doc(groupId);
+      DocumentReference userDocRef = firestore.collection("users").doc(userUid);
+
+      batch.update(userDocRef, {
+        'groupsId': FieldValue.arrayRemove([groupId]),
+      });
+
+      batch.delete(groupDocRef);
+
+      await batch.commit();
+
+      print(
+        "Grupo $groupId excluído com sucesso e removido da lista do usuário.",
+      );
+    } on FirebaseException catch (e) {
+      print("Erro ao excluir grupo: $e");
+      rethrow;
+    } catch (e) {
+      print("Erro inesperado ao excluir grupo: $e");
       rethrow;
     }
   }
