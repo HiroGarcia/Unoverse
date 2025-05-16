@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/group_service.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
 import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
-import 'package:unoverse/presentation/widgets/show_form_modal.dart';
+import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
 import '../../domain/entity/group_entity.dart';
 import '../pages/group/group_page.dart';
@@ -90,7 +90,7 @@ class _GroupCardState extends State<GroupCard> {
         children: [
           ElevatedButton.icon(
             onPressed: () {
-              showFormModal(
+              showFormDialog(
                 context: context,
                 type: EnumType.group,
                 group: widget.group,

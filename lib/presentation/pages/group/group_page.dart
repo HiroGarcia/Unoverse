@@ -4,7 +4,7 @@ import 'package:unoverse/data/services/player_provider.dart';
 import 'package:unoverse/domain/entity/enum_type.dart'; // Importe se showFormModal precisar
 
 import '../../../domain/entity/group_entity.dart';
-import '../../widgets/show_form_modal.dart'; // Importe se showFormModal precisar
+import '../../widgets/show_form_dialog.dart'; // Importe se showFormModal precisar
 
 class GroupPage extends StatefulWidget {
   final Group group;
@@ -50,7 +50,7 @@ class _GroupPageState extends State<GroupPage> {
       appBar: AppBar(title: Text(widget.group.name)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showFormModal(
+          showFormDialog(
             context: context,
             type: EnumType.player,
             groupId: widget.group.groupId,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:unoverse/presentation/widgets/group_card.dart';
-import 'package:unoverse/presentation/widgets/show_form_modal.dart';
+import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
 import '../../../data/services/group_provider.dart';
 import '../../../data/services/user_provider.dart';
@@ -115,7 +115,7 @@ class HomePage extends StatelessWidget {
             handleInteractionOrReset(
               context: context,
               onValid:
-                  () => showFormModal(
+                  () => showFormDialog(
                     context: context,
                     uid: userAuth.uid,
                     type: EnumType.group,
