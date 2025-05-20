@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/player_provider.dart';
-import 'package:unoverse/domain/entity/enum_type.dart'; // Importe se showFormModal precisar
+import 'package:unoverse/domain/entity/enum_type.dart';
 
 import '../../../domain/entity/group_entity.dart';
-import '../../widgets/show_form_dialog.dart'; // Importe se showFormModal precisar
+import '../../widgets/add_new_matche.dart';
+import '../../widgets/show_form_dialog.dart';
 
 class GroupPage extends StatefulWidget {
   final Group group;
@@ -47,13 +48,31 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     final listPlayer = context.watch<PlayerProvider>().players;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.group.name)),
+      appBar: AppBar(
+        title: Text(widget.group.name),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showFormDialog(
+                context: context,
+                type: EnumType.player,
+                groupId: widget.group.groupId,
+              );
+            },
+            icon: Icon(
+              Icons.person_add,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showFormDialog(
+          addNewMatche(
             context: context,
-            type: EnumType.player,
+            players: listPlayer,
             groupId: widget.group.groupId,
+            config: widget.group.config,
           );
         },
         child: Icon(Icons.add),
