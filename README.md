@@ -1,18 +1,39 @@
-# unoverse
+# Unoverse 🎲🔥
 
-A new Flutter project.
+**Unoverse** é um aplicativo Flutter desenvolvido para facilitar o controle de pontuação em partidas de Uno jogadas entre amigos. Ele substitui o uso de planilhas manuais, automatizando o registro e a visualização das partidas e pontuações.
 
-## Getting Started
+## 📱 Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Registro de partidas com até 3 colocados
+- Sistema de pontuação automática:
+  - 🥇 1º lugar: 3 pontos
+  - 🥈 2º lugar: 2 pontos
+  - 🥉 3º lugar: 1 ponto
+- Tela inicial com **cards de grupos**
+- Integração com Firebase
+- Authenticação com email e senha
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🛠 Tecnologias Utilizadas
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Flutter** (SDK de desenvolvimento multiplataforma)
+- **Dart** (linguagem principal)
+- **Firebase** (autenticação e banco de dados)
+- Gerenciamento de estado com `Provider`
+  
+
+
+## 📸 Capturas de Tela
+
+Em andamento
+
+## 🧑‍💻 Autor
+
+Desenvolvido por Guilherme Garcia
+📧 DevGuiGarcia@hotmail.com
+
+## 📌 Status do Projeto
+
+#### 🚧 Em desenvolvimento
 
 ⚠️ Este projeto requer os arquivos google-services.json e GoogleService-Info.plist. Para rodar localmente, crie seu próprio projeto Firebase e adicione esses arquivos nos locais corretos.
