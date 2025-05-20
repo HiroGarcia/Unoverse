@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unoverse/data/services/user_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -30,6 +31,7 @@ class AuthService {
     required email,
     required password,
     required name,
+    required user,
   }) async {
     try {
       UserCredential userCredential = await _firebaseAuth
@@ -37,6 +39,7 @@ class AuthService {
 
       await userCredential.user!.updateDisplayName(name);
       await userCredential.user!.updatePhotoURL('1');
+      UserService().createUser(user);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "email-already-in-use":

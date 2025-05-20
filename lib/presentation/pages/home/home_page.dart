@@ -37,7 +37,17 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(title: Text('Unoverse Groups')),
         drawer: Drawer(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            handleInteractionOrReset(
+              context: context,
+              onValid:
+                  () => showFormDialog(
+                    context: context,
+                    uid: userAuth.uid,
+                    type: EnumType.group,
+                  ),
+            );
+          },
           child: Icon(Icons.add),
         ),
         body: const Center(
@@ -58,7 +68,15 @@ class HomePage extends StatelessWidget {
         drawer: Drawer(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print("FAB Pressionado (durante loading)");
+            handleInteractionOrReset(
+              context: context,
+              onValid:
+                  () => showFormDialog(
+                    context: context,
+                    uid: userAuth.uid,
+                    type: EnumType.group,
+                  ),
+            );
           },
           child: Icon(Icons.add),
         ),
@@ -89,14 +107,6 @@ class HomePage extends StatelessWidget {
                     print(groups.length);
                     try {
                       print("Iniciando processo de logout.");
-                      // Provider.of<GroupProvider>(
-                      //   context,
-                      //   listen: false,
-                      // ).resetForSignOut();
-                      // Provider.of<UserProvider>(
-                      //   context,
-                      //   listen: false,
-                      // ).resetForSignOut();
                       await sair.signOut();
                       print("FirebaseAuth signOut() concluído.");
                     } catch (e) {
@@ -143,35 +153,9 @@ class HomePage extends StatelessWidget {
                       crossAxisSpacing: 3,
                       childAspectRatio: 0.6437,
                     ),
-                    itemCount: groups.length + 1,
+                    itemCount: groups.length,
                     itemBuilder: (context, index) {
-                      if (index < groups.length) {
-                        final group = groups[index];
-                        return GroupCard(group: group, uid: userAuth.uid);
-                      } else {
-                        return Card(
-                          color: Theme.of(context).colorScheme.secondary,
-                          elevation: 2,
-                          margin: const EdgeInsets.all(32.0),
-                          shape: CircleBorder(),
-                          child: InkWell(
-                            onTap: null,
-                            borderRadius: BorderRadius.circular(14),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: 60,
-                                    color: Colors.black38,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
+                      return GroupCard(group: groups[index], uid: userAuth.uid);
                     },
                   ),
                 ),

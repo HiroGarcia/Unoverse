@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'U N O V E R S E',
                   style: TextStyle(
-                    fontSize: 50,
+                    fontSize: 45,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
                   ),

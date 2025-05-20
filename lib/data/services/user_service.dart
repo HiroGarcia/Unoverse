@@ -13,4 +13,8 @@ class UserService {
 
     return UserEntity.fromMap(snapshot.data()!);
   }
+
+  Future<void> createUser(UserEntity user) async {
+    await firestore.collection("users").doc(uid).set(user.toMap());
+  }
 }

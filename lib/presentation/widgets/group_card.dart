@@ -111,6 +111,10 @@ class _GroupCardState extends State<GroupCard> {
                 context: context,
                 onConfirm: () async {
                   try {
+                    Provider.of<CardFlipController>(
+                      context,
+                      listen: false,
+                    ).reset();
                     await GroupService().deleteGroup(
                       widget.group.groupId,
                       widget.uid,

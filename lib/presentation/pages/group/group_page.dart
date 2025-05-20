@@ -47,6 +47,10 @@ class _GroupPageState extends State<GroupPage> {
   @override
   Widget build(BuildContext context) {
     final listPlayer = context.watch<PlayerProvider>().players;
+    final sortedPlayers = [...listPlayer]..sort((a, b) {
+      return b.totalScore.compareTo(a.totalScore);
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.group.name),
@@ -70,7 +74,7 @@ class _GroupPageState extends State<GroupPage> {
         onPressed: () {
           addNewMatche(
             context: context,
-            players: listPlayer,
+            players: sortedPlayers,
             groupId: widget.group.groupId,
             config: widget.group.config,
           );
@@ -95,7 +99,7 @@ class _GroupPageState extends State<GroupPage> {
                     crossAxisSpacing: 3,
                     childAspectRatio: 1.0,
                   ),
-                  itemCount: listPlayer.length,
+                  itemCount: sortedPlayers.length,
                   itemBuilder: (context, index) {
                     return Card(
                       color: Theme.of(context).colorScheme.secondary,
@@ -104,7 +108,7 @@ class _GroupPageState extends State<GroupPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              listPlayer[index].name,
+                              sortedPlayers[index].name,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -112,7 +116,7 @@ class _GroupPageState extends State<GroupPage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Pontuação total: ${listPlayer[index].totalScore}',
+                              'Pontuação total: ${sortedPlayers[index].totalScore}',
                             ),
                           ],
                         ),

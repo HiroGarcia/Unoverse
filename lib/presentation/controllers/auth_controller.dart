@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/services/auth_service.dart';
+import '../../domain/entity/user_entity.dart';
 import '../widgets/show_snackbar.dart';
 
 class AuthController {
@@ -31,6 +32,7 @@ class AuthController {
       email: email,
       password: password,
       name: name,
+      user: UserEntity(name: name, email: email, groupsId: []),
     );
 
     if (!context.mounted) return;
