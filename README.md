@@ -36,4 +36,4 @@ Desenvolvido por Guilherme Garcia
 
 #### 🚧 Em desenvolvimento
 
-⚠️ Este projeto requer os arquivos google-services.json e GoogleService-Info.plist. Para rodar localmente, crie seu próprio projeto Firebase e adicione esses arquivos nos locais corretos.
+⚠️ Este projeto requer os arquivos google-services.json e GoogleService-Info.plist. Para rodar localmente, crie seu próprio projeto Firebase e adicione esses arquivos nos locais corretos. Devido a utilização de `rxdart` para construção de `MultiProviders`, é necessario configurar as permissões do DB.  
