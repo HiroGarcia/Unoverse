@@ -44,6 +44,8 @@ Future<void> showFormDialog({
     } else {
       title = 'Editar Jogador';
       nameController.text = player.name;
+      emailController.text = player.userEmail!;
+      initialScoreController.text = player.totalScore.toString();
     }
   } else if (type == EnumType.member) {
     nameType = 'Membro';
@@ -203,8 +205,8 @@ Future<void> showFormDialog({
                     members: membersList,
                     role: role,
                     config: config,
-                    groupUid: (group != null) ? group.groupId : null,
-                    createIn: (group != null) ? group.createIn : null,
+                    groupUid: group?.groupId,
+                    createIn: group?.createIn,
                   );
                   Navigator.pop(context);
                 } else if (type == EnumType.player) {
@@ -213,6 +215,9 @@ Future<void> showFormDialog({
                     userEmail: emailController.text,
                     scoreInitial: int.parse(initialScoreController.text),
                     groupId: groupId!,
+                    playerId: player?.playerId,
+                    totalMatches: player?.totalMatches,
+                    totalMatchesPlayed: player?.totalMatchesPlayed,
                   );
                   Navigator.pop(context);
                 }

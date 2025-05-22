@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:unoverse/presentation/widgets/group_card.dart';
+import 'package:unoverse/presentation/widgets/my_card.dart';
 import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
 import '../../../data/services/group_provider.dart';
@@ -155,7 +155,11 @@ class HomePage extends StatelessWidget {
                     ),
                     itemCount: groups.length,
                     itemBuilder: (context, index) {
-                      return GroupCard(group: groups[index], uid: userAuth.uid);
+                      return MyCard(
+                        group: groups[index],
+                        uid: userAuth.uid,
+                        enumType: EnumType.group,
+                      );
                     },
                   ),
                 ),

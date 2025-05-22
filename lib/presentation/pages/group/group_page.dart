@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/player_provider.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
+import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
+import 'package:unoverse/presentation/widgets/group_card.dart';
 
 import '../../../domain/entity/group_entity.dart';
 import '../../widgets/add_new_matche.dart';
 import '../../widgets/show_form_dialog.dart';
 
 class GroupPage extends StatefulWidget {
+  final String uid;
   final Group group;
-  const GroupPage({required this.group, super.key});
+  const GroupPage({required this.group, required this.uid, super.key});
 
   @override
   State<GroupPage> createState() => _GroupPageState();
@@ -53,14 +56,33 @@ class _GroupPageState extends State<GroupPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            handleInteractionOrReset(
+              context: context,
+              onValid: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
         title: Text(widget.group.name),
         actions: [
           IconButton(
             onPressed: () {
-              showFormDialog(
+              handleInteractionOrReset(
                 context: context,
-                type: EnumType.player,
-                groupId: widget.group.groupId,
+                onValid: () {
+                  showFormDialog(
+                    context: context,
+                    type: EnumType.player,
+                    groupId: widget.group.groupId,
+                  );
+                },
               );
             },
             icon: Icon(
@@ -72,11 +94,16 @@ class _GroupPageState extends State<GroupPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          addNewMatche(
+          handleInteractionOrReset(
             context: context,
-            players: sortedPlayers,
-            groupId: widget.group.groupId,
-            config: widget.group.config,
+            onValid: () {
+              addNewMatche(
+                context: context,
+                players: sortedPlayers,
+                groupId: widget.group.groupId,
+                config: widget.group.config,
+              );
+            },
           );
         },
         child: Icon(Icons.add),
@@ -101,26 +128,11 @@ class _GroupPageState extends State<GroupPage> {
                   ),
                   itemCount: sortedPlayers.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      color: Theme.of(context).colorScheme.secondary,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              sortedPlayers[index].name,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Pontuação total: ${sortedPlayers[index].totalScore}',
-                            ),
-                          ],
-                        ),
-                      ),
+                    return MyCard(
+                      group: widget.group,
+                      uid: widget.uid,
+                      player: sortedPlayers[index],
+                      enumType: EnumType.player,
                     );
                   },
                 ),

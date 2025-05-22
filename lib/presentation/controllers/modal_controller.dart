@@ -35,15 +35,18 @@ class ModalController {
     required String userEmail,
     required int scoreInitial,
     required String groupId,
+    String? playerId,
+    int? totalMatches,
+    int? totalMatchesPlayed,
   }) {
     playerService.addPlayer(
       player: Player(
-        playerId: Uuid().v1(),
+        playerId: playerId ?? Uuid().v1(),
         name: name,
         userEmail: userEmail,
         totalScore: scoreInitial,
-        totalMatches: 0,
-        totalMatchesPlayed: 0,
+        totalMatches: totalMatches ?? 0,
+        totalMatchesPlayed: totalMatchesPlayed ?? 0,
       ),
       groupId: groupId,
     );

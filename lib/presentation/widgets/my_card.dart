@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/group_service.dart';
+import 'package:unoverse/data/services/player_service.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
+import 'package:unoverse/domain/entity/player_entity.dart';
 import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
 import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
@@ -10,16 +12,25 @@ import '../../domain/entity/group_entity.dart';
 import '../pages/group/group_page.dart';
 import 'my_alert_dialog.dart';
 
-class GroupCard extends StatefulWidget {
+class MyCard extends StatefulWidget {
   final Group group;
+  final Player? player;
   final String uid;
-  const GroupCard({super.key, required this.group, required this.uid});
+  final EnumType enumType;
+
+  const MyCard({
+    super.key,
+    required this.group,
+    required this.uid,
+    this.player,
+    required this.enumType,
+  });
 
   @override
-  State<GroupCard> createState() => _GroupCardState();
+  State<MyCard> createState() => _MyCardState();
 }
 
-class _GroupCardState extends State<GroupCard> {
+class _MyCardState extends State<MyCard> {
   final flipCardController = FlipCardController();
   @override
   Widget build(BuildContext context) {
@@ -32,14 +43,21 @@ class _GroupCardState extends State<GroupCard> {
               : () {
                 handleInteractionOrReset(
                   context: context,
-                  onValid: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupPage(group: widget.group),
-                      ),
-                    );
-                  },
+                  onValid:
+                      widget.enumType == EnumType.group
+                          ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => GroupPage(
+                                      group: widget.group,
+                                      uid: widget.uid,
+                                    ),
+                              ),
+                            );
+                          }
+                          : () {},
                 );
               },
       onLongPress: () {
@@ -67,14 +85,31 @@ class _GroupCardState extends State<GroupCard> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              widget.group.name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
+            widget.enumType == EnumType.group
+                ? Text(
+                  widget.group.name,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+                : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.player!.name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pontuação total: ${widget.player!.totalScore}',
+                    ),
+                  ],
+                ),
           ],
         ),
       ),
@@ -92,9 +127,10 @@ class _GroupCardState extends State<GroupCard> {
             onPressed: () {
               showFormDialog(
                 context: context,
-                type: EnumType.group,
+                type: widget.enumType,
                 group: widget.group,
                 uid: widget.uid,
+                player: widget.player,
               );
             },
             icon: Icon(Icons.edit),
@@ -115,11 +151,21 @@ class _GroupCardState extends State<GroupCard> {
                       context,
                       listen: false,
                     ).reset();
-                    await GroupService().deleteGroup(
-                      widget.group.groupId,
-                      widget.uid,
+                    if (widget.enumType == EnumType.group) {
+                      await GroupService().deleteGroup(
+                        widget.group.groupId,
+                        widget.uid,
+                      );
+                    } else if (widget.enumType == EnumType.player) {
+                      await PlayerService().deletePlayer(
+                        groupId: widget.group.groupId,
+                        playerId: widget.player!.playerId,
+                        userUid: widget.uid,
+                      );
+                    }
+                    print(
+                      '-----${widget.enumType} excluído com sucesso!-----',
                     );
-                    print('-----Grupo excluído com sucesso!-----');
                     if (!mounted) return;
                   } catch (e) {
                     if (!mounted) return;
