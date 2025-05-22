@@ -160,7 +160,6 @@ class _MyCardState extends State<MyCard> {
                       await PlayerService().deletePlayer(
                         groupId: widget.group.groupId,
                         playerId: widget.player!.playerId,
-                        userUid: widget.uid,
                       );
                     }
                     print(

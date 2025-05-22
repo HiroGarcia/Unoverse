@@ -9,7 +9,7 @@ import 'my_textfield.dart';
 Future<void> showFormDialog({
   required BuildContext context,
   String? uid,
-  String? groupId,
+
   Group? group,
   Player? player,
   required EnumType type,
@@ -214,7 +214,7 @@ Future<void> showFormDialog({
                     name: nameController.text,
                     userEmail: emailController.text,
                     scoreInitial: int.parse(initialScoreController.text),
-                    groupId: groupId!,
+                    groupId: group!.groupId,
                     playerId: player?.playerId,
                     totalMatches: player?.totalMatches,
                     totalMatchesPlayed: player?.totalMatchesPlayed,

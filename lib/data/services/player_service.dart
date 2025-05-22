@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../domain/entity/player_entity.dart';
 
@@ -31,9 +32,9 @@ class PlayerService {
 
   Future<void> deletePlayer({
     required String groupId,
-    required String userUid,
     required String playerId,
   }) async {
+    String userUid = FirebaseAuth.instance.currentUser!.uid;
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await firestore.collection("groups").doc(groupId).get();

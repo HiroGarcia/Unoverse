@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/player_provider.dart';
 import 'package:unoverse/domain/entity/enum_type.dart';
 import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
-import 'package:unoverse/presentation/widgets/group_card.dart';
+import 'package:unoverse/presentation/widgets/my_card.dart';
 
 import '../../../domain/entity/group_entity.dart';
 import '../../widgets/add_new_matche.dart';
@@ -80,7 +80,7 @@ class _GroupPageState extends State<GroupPage> {
                   showFormDialog(
                     context: context,
                     type: EnumType.player,
-                    groupId: widget.group.groupId,
+                    group: widget.group,
                   );
                 },
               );
