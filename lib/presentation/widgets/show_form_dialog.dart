@@ -58,6 +58,82 @@ Future<void> showFormDialog({
 
   final formKey = GlobalKey<FormState>();
 
+  void saveOnClick() {
+    if (formKey.currentState!.validate()) {
+      if (type == EnumType.group) {
+        Map<String, String> role = {uid!: 'master'};
+        Map<String, int> config = {
+          'primeiro': int.parse(primeiroController.text),
+          'segundo': int.parse(segundoController.text),
+          'terceiro': int.parse(terceiroController.text),
+        };
+        List<String> membersList = [uid];
+        modalController.addGroup(
+          name: nameController.text,
+          uid: uid,
+          members: membersList,
+          role: role,
+          config: config,
+          groupUid: group?.groupId,
+          createIn: group?.createIn,
+        );
+        Navigator.pop(context);
+      } else if (type == EnumType.player) {
+        modalController.addPlayer(
+          name: nameController.text,
+          userEmail: emailController.text,
+          scoreInitial: int.parse(initialScoreController.text),
+          groupId: group!.groupId,
+          playerId: player?.playerId,
+          totalMatches: player?.totalMatches,
+          totalMatchesPlayed: player?.totalMatchesPlayed,
+        );
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  void cancelOnClick() {
+    Navigator.pop(context);
+  }
+
+  String? nameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Nome é obrigatório';
+    }
+    if (value.length < 3) {
+      return 'Nome deve ter pelo menos 3 caracteres';
+    }
+    return null;
+  }
+
+  String? scoreValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Pontuação é obrigatória';
+    }
+    return null;
+  }
+
+  String? emailValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    if (!value.contains('@') || !value.contains('.')) {
+      return 'Entre com um email válido';
+    }
+    return null;
+  }
+
+  String? inicitalScoreValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Pontuação inicial é obrigatória';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Entre com um número válido';
+    }
+    return null;
+  }
+
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -92,13 +168,7 @@ Future<void> showFormDialog({
                     labelText: 'Nome do $nameType',
                     obscureText: false,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Nome é obrigatório';
-                      }
-                      if (value.length < 3) {
-                        return 'Nome deve ter pelo menos 3 caracteres';
-                      }
-                      return null;
+                      return nameValidator(value);
                     },
                   ),
                   const SizedBox(height: 10),
@@ -111,10 +181,7 @@ Future<void> showFormDialog({
                       obscureText: false,
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Pontuação é obrigatória';
-                        }
-                        return null;
+                        return scoreValidator(value);
                       },
                     ),
                     const SizedBox(height: 10),
@@ -124,10 +191,7 @@ Future<void> showFormDialog({
                       obscureText: false,
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Pontuação é obrigatória';
-                        }
-                        return null;
+                        return scoreValidator(value);
                       },
                     ),
                     const SizedBox(height: 10),
@@ -137,10 +201,7 @@ Future<void> showFormDialog({
                       obscureText: false,
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Pontuação é obrigatória';
-                        }
-                        return null;
+                        return scoreValidator(value);
                       },
                     ),
                   ] else if (type == EnumType.player) ...[
@@ -150,13 +211,7 @@ Future<void> showFormDialog({
                       labelText: 'Email do Jogador (Opcional)',
                       obscureText: false,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return null;
-                        }
-                        if (!value.contains('@') || !value.contains('.')) {
-                          return 'Entre com um email válido';
-                        }
-                        return null;
+                        return emailValidator(value);
                       },
                     ),
                     const SizedBox(height: 10),
@@ -166,13 +221,7 @@ Future<void> showFormDialog({
                       labelText: 'Pontuação Inicial',
                       obscureText: false,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Pontuação inicial é obrigatória';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Entre com um número válido';
-                        }
-                        return null;
+                        return inicitalScoreValidator(value);
                       },
                     ),
                   ],
@@ -183,46 +232,11 @@ Future<void> showFormDialog({
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: cancelOnClick,
             child: Text('Cancelar'),
           ),
           ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                if (type == EnumType.group) {
-                  Map<String, String> role = {uid!: 'master'};
-                  Map<String, int> config = {
-                    'primeiro': int.parse(primeiroController.text),
-                    'segundo': int.parse(segundoController.text),
-                    'terceiro': int.parse(terceiroController.text),
-                  };
-                  List<String> membersList = [uid];
-                  modalController.addGroup(
-                    name: nameController.text,
-                    uid: uid,
-                    members: membersList,
-                    role: role,
-                    config: config,
-                    groupUid: group?.groupId,
-                    createIn: group?.createIn,
-                  );
-                  Navigator.pop(context);
-                } else if (type == EnumType.player) {
-                  modalController.addPlayer(
-                    name: nameController.text,
-                    userEmail: emailController.text,
-                    scoreInitial: int.parse(initialScoreController.text),
-                    groupId: group!.groupId,
-                    playerId: player?.playerId,
-                    totalMatches: player?.totalMatches,
-                    totalMatchesPlayed: player?.totalMatchesPlayed,
-                  );
-                  Navigator.pop(context);
-                }
-              }
-            },
+            onPressed: saveOnClick,
             child: Text('Salvar'),
           ),
         ],
