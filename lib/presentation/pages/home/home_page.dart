@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:unoverse/presentation/widgets/my_card.dart';
+import 'package:unoverse/presentation/widgets/my_drawer.dart';
 import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
 import '../../../data/services/group_provider.dart';
@@ -35,7 +36,7 @@ class HomePage extends StatelessWidget {
       print("HomePage: user.groupsId está vazia. Mostrando mensagem inicial.");
       return Scaffold(
         appBar: AppBar(title: Text('Unoverse Groups')),
-        drawer: Drawer(),
+        drawer: MyDrawer(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             handleInteractionOrReset(
@@ -65,7 +66,7 @@ class HomePage extends StatelessWidget {
       );
       return Scaffold(
         appBar: AppBar(title: Text('Unoverse Groups')),
-        drawer: Drawer(),
+        drawer: MyDrawer(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             handleInteractionOrReset(
@@ -83,7 +84,6 @@ class HomePage extends StatelessWidget {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    FirebaseAuth sair = FirebaseAuth.instance;
     return GestureDetector(
       onTap: () {
         context.read<CardFlipController>().reset();
@@ -105,13 +105,6 @@ class HomePage extends StatelessWidget {
                     print('Grupos: ${user.groupsId}');
                     print('Name Group: ${groups[0].name}');
                     print(groups.length);
-                    try {
-                      print("Iniciando processo de logout.");
-                      await sair.signOut();
-                      print("FirebaseAuth signOut() concluído.");
-                    } catch (e) {
-                      print("Erro durante o processo de logout: $e");
-                    }
                   },
                 );
               },
@@ -134,7 +127,7 @@ class HomePage extends StatelessWidget {
           },
           child: Icon(Icons.add),
         ),
-        drawer: Drawer(),
+        drawer: MyDrawer(),
         body:
             groups.isEmpty && !isLoadingGroups
                 ? const Center(
