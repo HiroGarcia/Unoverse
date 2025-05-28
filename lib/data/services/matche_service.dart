@@ -10,6 +10,7 @@ class MatcheService {
         .collection("groups")
         .doc(groupId)
         .collection("matches")
+        .orderBy('dateTime', descending: true)
         .snapshots()
         .map(
           (snapshot) =>
