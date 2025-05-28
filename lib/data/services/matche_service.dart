@@ -6,6 +6,7 @@ class MatcheService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Stream<List<MatcheEntity>> streamMatches(String groupId) {
+    print("matche_service - streamMatches Chamado");
     return firestore
         .collection("groups")
         .doc(groupId)
@@ -32,6 +33,8 @@ class MatcheService {
         .collection("matches")
         .doc(matche.id);
     batch.set(matcheRef, matche.toMap());
+
+    print("matche_service - addMatche Chamado");
 
     for (final player in matche.poitns.entries) {
       final playerRef = firestore
