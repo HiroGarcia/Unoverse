@@ -158,9 +158,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart'; // Para ChangeNotifier e listEquals
 import '../../domain/entity/group_entity.dart';
-import './group_service.dart'; // Importe GroupService
+import '../services/group_service.dart'; // Importe GroupService
 
-import './user_provider.dart'; // Importe UserProvider
+import 'user_provider.dart'; // Importe UserProvider
 
 class GroupProvider with ChangeNotifier {
   final GroupService groupService;

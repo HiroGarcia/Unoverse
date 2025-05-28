@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unoverse/presentation/widgets/show_snackbar.dart';
 
-import '../../controllers/auth_controller.dart';
+import '../../../controllers/auth_controller.dart';
 import '../../widgets/my_button.dart';
 import '../../widgets/my_textfield.dart';
 

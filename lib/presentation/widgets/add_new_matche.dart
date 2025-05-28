@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unoverse/presentation/controllers/matche_controller.dart';
+import 'package:unoverse/controllers/matche_controller.dart';
 import '../../domain/entity/player_entity.dart';
 
 Future<void> addNewMatche({

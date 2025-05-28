@@ -3,9 +3,9 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:provider/provider.dart';
 import 'package:unoverse/data/services/group_service.dart';
 import 'package:unoverse/data/services/player_service.dart';
-import 'package:unoverse/domain/entity/enum_type.dart';
+import 'package:unoverse/domain/enums/enum_type.dart';
 import 'package:unoverse/domain/entity/player_entity.dart';
-import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
+import 'package:unoverse/controllers/card_flip_controller.dart';
 import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
 import '../../domain/entity/group_entity.dart';

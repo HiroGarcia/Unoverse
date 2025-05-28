@@ -6,11 +6,11 @@ import 'package:unoverse/presentation/widgets/my_card.dart';
 import 'package:unoverse/presentation/widgets/my_drawer.dart';
 import 'package:unoverse/presentation/widgets/show_form_dialog.dart';
 
-import '../../../data/services/group_provider.dart';
-import '../../../data/services/user_provider.dart';
+import '../../../data/providers/group_provider.dart';
+import '../../../data/providers/user_provider.dart';
 
-import '../../../domain/entity/enum_type.dart';
-import '../../controllers/card_flip_controller.dart';
+import '../../../domain/enums/enum_type.dart';
+import '../../../controllers/card_flip_controller.dart';
 
 class HomePage extends StatelessWidget {
   final User userAuth;

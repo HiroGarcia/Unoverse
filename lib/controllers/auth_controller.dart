@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../data/services/auth_service.dart';
-import '../../domain/entity/user_entity.dart';
-import '../widgets/show_snackbar.dart';
+import '../data/services/auth_service.dart';
+import '../domain/entity/user_entity.dart';
+import '../presentation/widgets/show_snackbar.dart';
 
 class AuthController {
   AuthService authService = AuthService();

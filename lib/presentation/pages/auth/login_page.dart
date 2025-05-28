@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unoverse/presentation/widgets/my_button.dart';
 import 'package:unoverse/presentation/widgets/my_textfield.dart';
 
-import '../../controllers/auth_controller.dart';
+import '../../../controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? togglePages;

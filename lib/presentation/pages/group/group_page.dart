@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unoverse/data/services/player_provider.dart';
-import 'package:unoverse/domain/entity/enum_type.dart';
-import 'package:unoverse/presentation/controllers/card_flip_controller.dart';
+import 'package:unoverse/data/providers/player_provider.dart';
+import 'package:unoverse/domain/enums/enum_type.dart';
+import 'package:unoverse/controllers/card_flip_controller.dart';
 import 'package:unoverse/presentation/widgets/my_card.dart';
 
 import '../../../domain/entity/group_entity.dart';

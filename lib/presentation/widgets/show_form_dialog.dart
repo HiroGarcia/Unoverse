@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entity/enum_type.dart';
+import '../../domain/enums/enum_type.dart';
 import '../../domain/entity/group_entity.dart';
 import '../../domain/entity/player_entity.dart';
-import '../controllers/modal_controller.dart';
+import '../../controllers/modal_controller.dart';
 import 'my_textfield.dart';
 
 Future<void> showFormDialog({
