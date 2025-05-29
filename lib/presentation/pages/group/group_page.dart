@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unoverse/data/providers/player_provider.dart';
-import 'package:unoverse/domain/enums/enum_type.dart';
-import 'package:unoverse/controllers/card_flip_controller.dart';
-import 'package:unoverse/presentation/widgets/my_button.dart';
 
+import '../../../controllers/card_flip_controller.dart';
+import '../../../data/providers/player_provider.dart';
 import '../../../domain/entity/group_entity.dart';
-
+import '../../../domain/enums/enum_type.dart';
 import '../../widgets/add_new_matche.dart';
-import '../../widgets/my_history_list.dart';
+import '../../widgets/my_button.dart';
 import '../../widgets/show_form_dialog.dart';
+import 'my_history_list.dart';
+import 'my_player_list.dart';
 
 class GroupPage extends StatefulWidget {
   final String uid;
   final Group group;
-  const GroupPage({required this.group, required this.uid, super.key});
+
+  const GroupPage({
+    required this.group,
+    required this.uid,
+    super.key,
+  });
 
   @override
   State<GroupPage> createState() => _GroupPageState();
@@ -23,7 +28,7 @@ class GroupPage extends StatefulWidget {
 class _GroupPageState extends State<GroupPage> {
   late PlayerProvider _playerProvider;
   bool _isListeningStarted = false;
-  bool _expandHistorico = false; // Adicionado
+  bool _expandHistorico = false;
 
   @override
   void initState() {
@@ -35,9 +40,7 @@ class _GroupPageState extends State<GroupPage> {
     super.didChangeDependencies();
     _playerProvider = Provider.of<PlayerProvider>(context, listen: false);
     if (!_isListeningStarted) {
-      print(
-        "GroupPageState: didChangeDependencies - Iniciando escuta de jogadores para groupId: ${widget.group.groupId}",
-      );
+      print("GroupPageState: didChangeDependencies - Iniciando escuta de jogadores para groupId: ${widget.group.groupId}");
       _playerProvider.listenToPlayers(widget.group.groupId);
       _isListeningStarted = true;
     }
@@ -92,59 +95,36 @@ class _GroupPageState extends State<GroupPage> {
           color: Colors.red[900],
         ),
       ),
-      body:
-      // (listPlayer.isEmpty)
-      //     ? const Center(
-      //       child: Text(
-      //         "Nenhum jogador ainda.\nVamos criar o primeiro?",
-      //         textAlign: TextAlign.center,
-      //         style: TextStyle(fontSize: 18),
-      //       ),
-      //     )
-      //     :
-      SingleChildScrollView(
-        // Adicionado
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Column(
             children: [
               Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 margin: EdgeInsets.only(bottom: 25),
-                padding: EdgeInsets.all(25),
+                padding: EdgeInsets.all(20),
                 height: MediaQuery.of(context).size.height * 0.32,
-                color: Theme.of(context).colorScheme.secondary,
                 child: Column(
                   children: [
                     Text(
                       "Jogadores",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    SizedBox(
-                      height: 200,
-                      child:
-                          (listPlayer.isEmpty)
-                              ? const Center(
-                                child: Text(
-                                  "Nenhum jogador ainda.\nVamos criar o primeiro?",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                              )
-                              : Expanded(
-                                child: ListView.builder(
-                                  itemCount: sortedPlayers.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      height: 30,
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.tertiary,
-                                      child: Text(sortedPlayers[index].name),
-                                    );
-                                  },
-                                ),
-                              ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: MyPlayerList(
+                        group: widget.group,
+                        sortedPlayers: sortedPlayers,
+                      ),
                     ),
                   ],
                 ),
@@ -188,30 +168,41 @@ class _GroupPageState extends State<GroupPage> {
               const SizedBox(height: 25),
               // Histórico
               StatefulBuilder(
-                builder: (context, setStateHistorico) {
+                builder: (
+                  context,
+                  setStateHistorico,
+                ) {
                   return Container(
-                    height:
-                        _expandHistorico
-                            ? null
-                            : MediaQuery.of(context).size.height * 0.32,
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(
+                            context,
+                          ).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(
+                        12,
+                      ),
+                    ),
+                    height: _expandHistorico ? null : MediaQuery.of(context).size.height * 0.32,
                     padding: const EdgeInsets.only(
                       top: 10,
                       right: 10,
                       left: 10,
                     ),
-                    color: Theme.of(context).colorScheme.secondary,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Expanded(child: SizedBox()),
                             Expanded(
-                              child: const Text(
+                              child: SizedBox(),
+                            ),
+                            Expanded(
+                              child: Text(
                                 "Histórico",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -221,17 +212,15 @@ class _GroupPageState extends State<GroupPage> {
                                 alignment: Alignment.centerRight,
                                 child: IconButton(
                                   icon: Icon(
-                                    _expandHistorico
-                                        ? Icons.expand_less
-                                        : Icons.expand_more,
+                                    _expandHistorico ? Icons.expand_less : Icons.expand_more,
+                                    color: Theme.of(context).colorScheme.inversePrimary,
                                   ),
                                   onPressed:
                                       (listPlayer.isEmpty)
                                           ? null
                                           : () {
                                             setState(() {
-                                              _expandHistorico =
-                                                  !_expandHistorico;
+                                              _expandHistorico = !_expandHistorico;
                                             });
                                           },
                                 ),
@@ -239,16 +228,17 @@ class _GroupPageState extends State<GroupPage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
                         _expandHistorico
                             ? MyHistoryList(
-                              groupId: widget.group.groupId,
+                              group: widget.group,
                               sortedPlayers: sortedPlayers,
                             )
                             : Expanded(
-                              child: MyHistoryList(
-                                groupId: widget.group.groupId,
-                                sortedPlayers: sortedPlayers,
+                              child: SingleChildScrollView(
+                                child: MyHistoryList(
+                                  group: widget.group,
+                                  sortedPlayers: sortedPlayers,
+                                ),
                               ),
                             ),
                       ],

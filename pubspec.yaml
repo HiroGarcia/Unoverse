@@ -20,6 +20,7 @@ dependencies:
   provider: ^6.1.5
   flutter_flip_card: ^0.0.6
   rxdart: ^0.28.0
+  flutter_slidable: ^4.0.0
 
 dev_dependencies:
   flutter_test:

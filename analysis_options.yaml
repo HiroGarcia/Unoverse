@@ -5,6 +5,8 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    require_trailing_commas: false
 
 formatter:
   trailing_commas: preserve
+  page_width: 300

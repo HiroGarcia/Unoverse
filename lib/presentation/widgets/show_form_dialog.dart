@@ -9,7 +9,6 @@ import 'my_textfield.dart';
 Future<void> showFormDialog({
   required BuildContext context,
   String? uid,
-
   Group? group,
   Player? player,
   required EnumType type,
@@ -58,7 +57,7 @@ Future<void> showFormDialog({
 
   final formKey = GlobalKey<FormState>();
 
-  void saveOnClick() {
+  Future<void> saveOnClick({required BuildContext context}) async {
     if (formKey.currentState!.validate()) {
       if (type == EnumType.group) {
         Map<String, String> role = {uid!: 'master'};
@@ -77,7 +76,7 @@ Future<void> showFormDialog({
           groupUid: group?.groupId,
           createIn: group?.createIn,
         );
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       } else if (type == EnumType.player) {
         modalController.addPlayer(
           name: nameController.text,
@@ -88,13 +87,13 @@ Future<void> showFormDialog({
           totalMatches: player?.totalMatches,
           totalMatchesPlayed: player?.totalMatchesPlayed,
         );
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       }
     }
   }
 
-  void cancelOnClick() {
-    Navigator.pop(context);
+  Future<void> cancelOnClick({required BuildContext context}) async {
+    Navigator.of(context).pop();
   }
 
   String? nameValidator(String? value) {
@@ -232,11 +231,15 @@ Future<void> showFormDialog({
         ),
         actions: [
           TextButton(
-            onPressed: cancelOnClick,
+            onPressed: () {
+              cancelOnClick(context: context);
+            },
             child: Text('Cancelar'),
           ),
           ElevatedButton(
-            onPressed: saveOnClick,
+            onPressed: () {
+              saveOnClick(context: context);
+            },
             child: Text('Salvar'),
           ),
         ],

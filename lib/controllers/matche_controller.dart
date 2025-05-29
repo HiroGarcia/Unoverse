@@ -11,7 +11,7 @@ class MatcheController {
     MatcheEntity matche = MatcheEntity(
       id: Uuid().v4(),
       dateTime: DateTime.now(),
-      registerByUid: auth.currentUser!.uid,
+      registerByUid: {auth.currentUser!.uid: auth.currentUser!.displayName!},
       poitns: config,
     );
 

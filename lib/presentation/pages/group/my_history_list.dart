@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../../data/services/matche_service.dart';
-import '../../../domain/entity/matche_entity.dart';
-import '../../../domain/entity/player_entity.dart';
+import '../../../../data/services/matche_service.dart';
+import '../../../../domain/entity/matche_entity.dart';
+import '../../../../domain/entity/player_entity.dart';
+import '../../../domain/entity/group_entity.dart';
 
 class MyHistoryList extends StatelessWidget {
-  final String groupId;
   final List<Player> sortedPlayers;
+  final Group group;
 
-  const MyHistoryList({
-    super.key,
-    required this.groupId,
-    required this.sortedPlayers,
-  });
+  const MyHistoryList({super.key, required this.sortedPlayers, required this.group});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<MatcheEntity>>(
-      stream: MatcheService().streamMatches(groupId),
+      stream: MatcheService().streamMatches(group.groupId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -30,17 +27,16 @@ class MyHistoryList extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 1.1,
+            childAspectRatio: .7,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
           itemCount: matches.length,
           itemBuilder: (context, index) {
             final matche = matches[index];
-            final sortedWinners =
-                matche.poitns.entries.toList()
-                  ..sort((a, b) => b.value.compareTo(a.value));
+            final sortedWinners = matche.poitns.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
             return Card(
+              color: Theme.of(context).colorScheme.tertiary,
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(10),
@@ -85,7 +81,7 @@ class MyHistoryList extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Registrado por: ${matche.registerByUid}",
+                      "Registrado por: ${matche.registerByUid.values}",
                       style: const TextStyle(
                         fontSize: 12,
                         fontStyle: FontStyle.italic,
