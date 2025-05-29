@@ -5,7 +5,8 @@ import '../../../controllers/card_flip_controller.dart';
 import '../../../data/providers/player_provider.dart';
 import '../../../domain/entity/group_entity.dart';
 import '../../../domain/enums/enum_type.dart';
-import '../../widgets/add_new_matche.dart';
+import 'add_new_invite.dart';
+import 'add_new_matche.dart';
 import '../../widgets/my_button.dart';
 import '../../widgets/show_form_dialog.dart';
 import 'my_history_list.dart';
@@ -79,7 +80,9 @@ class _GroupPageState extends State<GroupPage> {
         title: Text(widget.group.name),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              addNewInvite(context: context, group: widget.group, userUid: widget.uid);
+            },
             icon: Icon(
               Icons.person_add,
               // color: Theme.of(context).colorScheme.primary,

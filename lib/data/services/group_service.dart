@@ -16,8 +16,7 @@ class GroupService {
 
     for (var group in groupId) {
       try {
-        DocumentSnapshot<Map<String, dynamic>> snapshot =
-            await firestore.collection("groups").doc(group).get();
+        DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore.collection("groups").doc(group).get();
 
         if (snapshot.exists) {
           print("Lendo grupo com ID da lista: ${snapshot.id}");
@@ -111,19 +110,12 @@ class GroupService {
       // Nota: Conforme discutido, o campo groupId dentro do doc é redundante
       // Se o ID do documento já é o groupId.
       // Considere remover 'groupId': groupId, do toMap() se o doc(group.groupId) já define o ID.
-      await firestore
-          .collection("groups")
-          .doc(group.groupId)
-          .set(group.toMap());
+      await firestore.collection("groups").doc(group.groupId).set(group.toMap());
       // Use Batched Writes para garantir atomicidade
       WriteBatch batch = firestore.batch();
 
-      DocumentReference userDocRef = firestore
-          .collection("users")
-          .doc(group.createBy);
-      DocumentReference groupDocRef = firestore
-          .collection("groups")
-          .doc(group.groupId);
+      DocumentReference userDocRef = firestore.collection("users").doc(group.createBy);
+      DocumentReference groupDocRef = firestore.collection("groups").doc(group.groupId);
 
       batch.update(userDocRef, {
         'groupsId': FieldValue.arrayUnion([group.groupId]),
@@ -144,16 +136,50 @@ class GroupService {
     }
   }
 
+  Future<dynamic> validateInviteAndAddMember({required String inviteId, required String userId}) async {
+    print("validateInviteAndAddMember Chamado");
+    try {
+      final inviteSnap = await firestore.collection('groupInvites').doc(inviteId).get();
+
+      if (!inviteSnap.exists) {
+        return "convite invalido";
+      }
+
+      final data = inviteSnap.data();
+      if (data == null || data['groupId'] is! String || data['role'] is! String || !(data['role'] == 'admin' || data['role'] == 'user') || data['used'] != false) {
+        return "convite invalido";
+      }
+
+      final groupId = data['groupId'] as String;
+      final role = data['role'] as String;
+
+      await addMemberToGroup(
+        groupId,
+        userId,
+        role,
+        inviteId,
+      );
+      return true; // sucesso
+    } catch (e) {
+      print("Erro ao validar convite e adicionar membro: $e");
+      return "convite invalido";
+    }
+  }
+
   // Exemplo de como você faria para adicionar um membro (usando atomicidade)
   Future<void> addMemberToGroup(
     String groupId,
     String userId,
     String role,
+    String inviteId,
   ) async {
+    print("addMemberToGroup Chamado");
+
     WriteBatch batch = firestore.batch();
 
     DocumentReference userDocRef = firestore.collection("users").doc(userId);
     DocumentReference groupDocRef = firestore.collection("groups").doc(groupId);
+    DocumentReference inviteDocRef = FirebaseFirestore.instance.collection("groupInvites").doc(inviteId);
 
     // Adiciona o groupId na lista do usuário
     batch.update(userDocRef, {
@@ -162,15 +188,20 @@ class GroupService {
 
     // Adiciona o role do usuário no mapa role do grupo
     batch.update(groupDocRef, {
-      'role.$userId':
-          role, // Adiciona/atualiza a chave com o UID do usuário e o role
+      'role.$userId': role, // Adiciona/atualiza a chave com o UID do usuário e o role
+      'usedInviteCode': inviteId,
+    });
+
+    // 3. Marca o convite como usado
+    batch.update(inviteDocRef, {
+      'used': true,
     });
 
     try {
       await batch.commit();
-      print("Membro $userId adicionado ao grupo $groupId com role $role");
+      print("Membro $userId adicionado ao grupo $groupId com role $role. Convite $inviteId marcado como usado.");
     } on FirebaseException catch (e) {
-      print("Erro Firebase ao adicionar membro: $e");
+      print("Erro Firebase ao adicionar membro e atualizar convite: ${e.code}");
       rethrow;
     } catch (e) {
       print("Erro inesperado ao adicionar membro: $e");
@@ -192,8 +223,7 @@ class GroupService {
 
     // Remove a chave do usuário do mapa role do grupo
     batch.update(groupDocRef, {
-      'role':
-          FieldValue.delete(), // Isso removeria o campo 'role' inteiro! CUIDADO!
+      'role': FieldValue.delete(), // Isso removeria o campo 'role' inteiro! CUIDADO!
       // Para remover APENAS a chave do usuário no mapa, é mais complexo
       // com FieldValue.delete(). Você precisaria ler o mapa role atual,
       // remover a chave no cliente e fazer um batch.update com o novo mapa inteiro.
@@ -244,8 +274,7 @@ class GroupService {
 
   Future<void> deleteGroup(String groupId, String userUid) async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await firestore.collection("groups").doc(groupId).get();
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore.collection("groups").doc(groupId).get();
 
       if (!snapshot.exists) {
         throw Exception("Grupo não encontrado.");
@@ -260,9 +289,7 @@ class GroupService {
 
       WriteBatch batch = firestore.batch();
 
-      DocumentReference groupDocRef = firestore
-          .collection("groups")
-          .doc(groupId);
+      DocumentReference groupDocRef = firestore.collection("groups").doc(groupId);
       DocumentReference userDocRef = firestore.collection("users").doc(userUid);
 
       batch.update(userDocRef, {

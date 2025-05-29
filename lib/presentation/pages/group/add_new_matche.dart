@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unoverse/controllers/matche_controller.dart';
-import '../../domain/entity/player_entity.dart';
+import '../../../domain/entity/player_entity.dart';
 
 Future<void> addNewMatche({
   required BuildContext context,
@@ -53,8 +53,7 @@ Future<void> addNewMatche({
                         },
                       ),
                     ),
-                    if (availablePlayers.isEmpty)
-                      const Text('Nenhum jogador disponível'),
+                    if (availablePlayers.isEmpty) const Text('Nenhum jogador disponível'),
                   ],
                 );
               },
@@ -81,19 +80,13 @@ Future<void> addNewMatche({
           List<Player> availableForSecond =
               players
                   .where(
-                    (p) =>
-                        firstPlace == null ||
-                        p.playerId != firstPlace!.playerId,
+                    (p) => firstPlace == null || p.playerId != firstPlace!.playerId,
                   )
                   .toList();
           List<Player> availableForThird =
               players
                   .where(
-                    (p) =>
-                        (firstPlace == null ||
-                            p.playerId != firstPlace!.playerId) &&
-                        (secondPlace == null ||
-                            p.playerId != secondPlace!.playerId),
+                    (p) => (firstPlace == null || p.playerId != firstPlace!.playerId) && (secondPlace == null || p.playerId != secondPlace!.playerId),
                   )
                   .toList();
 
@@ -159,8 +152,7 @@ Future<void> addNewMatche({
                               if (selected != null) {
                                 setState(() {
                                   secondPlace = selected;
-                                  if (thirdPlace?.playerId ==
-                                      selected.playerId) {
+                                  if (thirdPlace?.playerId == selected.playerId) {
                                     thirdPlace = null;
                                   }
                                 });
@@ -198,9 +190,7 @@ Future<void> addNewMatche({
               ),
               ElevatedButton(
                 onPressed:
-                    (firstPlace != null &&
-                            secondPlace != null &&
-                            thirdPlace != null)
+                    (firstPlace != null && secondPlace != null && thirdPlace != null)
                         ? () {
                           matcheController.addMatche(
                             groupId: groupId,
