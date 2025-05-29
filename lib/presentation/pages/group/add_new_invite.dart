@@ -49,89 +49,119 @@ Future<void> addNewInvite({
                 children: [
                   Text(
                     "Convite ID: $inviteId",
-                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
-                  if (isMaster) ...[
-                    CheckboxListTile(
-                      title: const Text('Admin'),
-                      value: isAdminSelected,
-                      selected: isUserSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          isAdminSelected = true;
-                          isUserSelected = false;
-                        });
-                      },
+                  if (isCreated) ...[
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Convite criado com sucesso, salve o código antes de sair dessa tela e compartilhe com o novo membro",
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    CheckboxListTile(
-                      title: const Text('User'),
-                      value: isUserSelected,
-                      selected: isAdminSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          isUserSelected = true;
-                          isAdminSelected = false;
-                        });
-                      },
-                      // secondary: const Icon(Icons.houglass_emp),
-                    ),
-                  ] else if (isAdmin) ...[
-                    CheckboxListTile(
-                      title: const Text('User'),
-                      value: true,
-                      onChanged: null,
-                    ),
+                  ] else ...[
+                    if (isMaster) ...[
+                      CheckboxListTile(
+                        title: const Text('Admin'),
+                        value: isAdminSelected,
+                        selected: isUserSelected,
+                        onChanged: (value) {
+                          setState(() {
+                            isAdminSelected = true;
+                            isUserSelected = false;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: const Text('User'),
+                        value: isUserSelected,
+                        selected: isAdminSelected,
+                        onChanged: (value) {
+                          setState(() {
+                            isUserSelected = true;
+                            isAdminSelected = false;
+                          });
+                        },
+                      ),
+                    ] else if (isAdmin) ...[
+                      CheckboxListTile(
+                        title: const Text('User'),
+                        value: true,
+                        onChanged: null,
+                      ),
+                    ],
                   ],
                 ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed:
-                    (isCreated || (isMaster && (!isAdminSelected && !isUserSelected)))
-                        ? null
-                        : () async {
-                          // Determina o papel do convite
-                          Role roleToSend;
-                          if (isMaster) {
-                            roleToSend = isAdminSelected ? Role.admin : Role.user;
-                          } else {
-                            roleToSend = Role.user;
-                          }
+            actions:
+                isCreated
+                    ? [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          "já salvei, sair",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ]
+                    : [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed:
+                            (isCreated || (isMaster && (!isAdminSelected && !isUserSelected)))
+                                ? null
+                                : () async {
+                                  // Determina o papel do convite
+                                  Role roleToSend;
+                                  if (isMaster) {
+                                    roleToSend = isAdminSelected ? Role.admin : Role.user;
+                                  } else {
+                                    roleToSend = Role.user;
+                                  }
 
-                          try {
-                            InviteController().createdInvite(
-                              groupId: group.groupId,
-                              role: roleToSend,
-                              inviteId: inviteId,
-                            );
-                            setState(() {
-                              isCreated = true;
-                              successText = 'Criado com sucesso';
-                            });
-                          } catch (e) {
-                            // Trate o erro se necessário
-                          }
-                        },
-                style: ButtonStyle(
-                  foregroundColor: WidgetStateProperty.resolveWith<Color>(
-                    (states) => isCreated ? Colors.green : Colors.white,
-                  ),
-                ),
-                child: Text(
-                  successText,
-                  style: TextStyle(
-                    color: isCreated ? Colors.green : null,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+                                  try {
+                                    InviteController().createdInvite(
+                                      groupId: group.groupId,
+                                      role: roleToSend,
+                                      inviteId: inviteId,
+                                    );
+                                    setState(() {
+                                      isCreated = true;
+                                      successText = 'Criado com sucesso';
+                                    });
+                                  } catch (e) {
+                                    // Trate o erro se necessário
+                                  }
+                                },
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                            (states) => isCreated ? Colors.green : Colors.white,
+                          ),
+                        ),
+                        child: Text(
+                          successText,
+                          style: TextStyle(
+                            color: isCreated ? Colors.green : null,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
           );
         },
       );

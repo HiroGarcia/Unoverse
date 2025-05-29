@@ -5,19 +5,23 @@ class UserEntity {
   String? email;
   String? avatar;
   List<String> groupsId;
+  Map<String, String>? invites;
 
   UserEntity({
     this.name = '',
     this.email = '',
     this.avatar = '',
     required this.groupsId,
+    this.invites,
   });
 
   UserEntity.fromMap(Map<String, dynamic> map)
     : name = map['name'],
       email = map['email'],
       avatar = map['avatar'] ?? '1',
-      groupsId = List<String>.from(map['groupsId'] ?? []);
+      groupsId = List<String>.from(
+        map['groupsId'] ?? [],
+      );
 
   factory UserEntity.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data();
