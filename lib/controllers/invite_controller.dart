@@ -14,6 +14,7 @@ class InviteController {
     required String groupId,
     required Role role,
     required String inviteId,
+    required String groupName,
   }) {
     print("createdInvite Chamado - Invite_controller");
 
@@ -27,7 +28,10 @@ class InviteController {
     );
 
     try {
-      _inviteService.createInvite(invite: invite);
+      _inviteService.createInvite(
+        invite: invite,
+        groupName: groupName,
+      );
     } on FirebaseException catch (e) {
       print(e.code);
     } catch (e) {
@@ -35,18 +39,20 @@ class InviteController {
     }
   }
 
-  void readInvite({required String inviteId}) {
+  Future<dynamic> readInvite({required String inviteId}) async {
     print("readInvite Chamado - Invite_controller");
 
     try {
-      _groupService.validateInviteAndAddMember(
+      return _groupService.validateInviteAndAddMember(
         inviteId: inviteId,
         userId: _auth.currentUser!.uid,
       );
     } on FirebaseException catch (e) {
       print(e.code);
+      return "convite invalido";
     } catch (e) {
       print(e);
+      return "convite invalido";
     }
   }
 }

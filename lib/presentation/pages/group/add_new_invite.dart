@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:unoverse/domain/enums/enum_role.dart';
+
 import 'package:uuid/uuid.dart';
 
 import '../../../controllers/invite_controller.dart';
 import '../../../domain/entity/group_entity.dart';
+import '../../../domain/enums/enum_role.dart';
 
 Future<void> addNewInvite({
   required BuildContext context,
@@ -43,7 +44,6 @@ Future<void> addNewInvite({
             ),
             content: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: 300,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -69,6 +69,10 @@ Future<void> addNewInvite({
                     ),
                   ] else ...[
                     if (isMaster) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text("Novo membro vai ser:"),
+                      ),
                       CheckboxListTile(
                         title: const Text('Admin'),
                         value: isAdminSelected,
@@ -92,6 +96,10 @@ Future<void> addNewInvite({
                         },
                       ),
                     ] else if (isAdmin) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text("Novo membro vai ser:"),
+                      ),
                       CheckboxListTile(
                         title: const Text('User'),
                         value: true,
@@ -139,6 +147,7 @@ Future<void> addNewInvite({
                                       groupId: group.groupId,
                                       role: roleToSend,
                                       inviteId: inviteId,
+                                      groupName: group.name,
                                     );
                                     setState(() {
                                       isCreated = true;

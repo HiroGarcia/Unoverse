@@ -142,11 +142,13 @@ class GroupService {
       final inviteSnap = await firestore.collection('groupInvites').doc(inviteId).get();
 
       if (!inviteSnap.exists) {
+        print("If group_service 144");
         return "convite invalido";
       }
 
       final data = inviteSnap.data();
       if (data == null || data['groupId'] is! String || data['role'] is! String || !(data['role'] == 'admin' || data['role'] == 'user') || data['used'] != false) {
+        print("If group_service 151");
         return "convite invalido";
       }
 
@@ -154,25 +156,28 @@ class GroupService {
       final role = data['role'] as String;
 
       await addMemberToGroup(
-        groupId,
-        userId,
-        role,
-        inviteId,
+        groupId: groupId,
+        userId: userId,
+        role: role,
+        inviteId: inviteId,
       );
       return true; // sucesso
+    } on FirebaseException catch (e) {
+      print("Erro ao validar convite e adicionar membro: ${e.code}");
+      return "convite invalido";
     } catch (e) {
-      print("Erro ao validar convite e adicionar membro: $e");
+      print("Erro em outro lugar: $e");
       return "convite invalido";
     }
   }
 
   // Exemplo de como você faria para adicionar um membro (usando atomicidade)
-  Future<void> addMemberToGroup(
-    String groupId,
-    String userId,
-    String role,
-    String inviteId,
-  ) async {
+  Future<void> addMemberToGroup({
+    required String groupId,
+    required String userId,
+    required String role,
+    required String inviteId,
+  }) async {
     print("addMemberToGroup Chamado");
 
     WriteBatch batch = firestore.batch();
@@ -189,9 +194,11 @@ class GroupService {
     // Adiciona o role do usuário no mapa role do grupo
     batch.update(groupDocRef, {
       'role.$userId': role, // Adiciona/atualiza a chave com o UID do usuário e o role
-      'usedInviteCode': inviteId,
     });
 
+    batch.update(groupDocRef, {
+      'usedInviteCode': inviteId,
+    });
     // 3. Marca o convite como usado
     batch.update(inviteDocRef, {
       'used': true,

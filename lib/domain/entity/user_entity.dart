@@ -5,14 +5,14 @@ class UserEntity {
   String? email;
   String? avatar;
   List<String> groupsId;
-  Map<String, String>? invites;
+  Map<String, String> invites;
 
   UserEntity({
     this.name = '',
     this.email = '',
     this.avatar = '',
     required this.groupsId,
-    this.invites,
+    this.invites = const {},
   });
 
   UserEntity.fromMap(Map<String, dynamic> map)
@@ -21,7 +21,8 @@ class UserEntity {
       avatar = map['avatar'] ?? '1',
       groupsId = List<String>.from(
         map['groupsId'] ?? [],
-      );
+      ),
+      invites = Map<String, String>.from(map['invites'] ?? {});
 
   factory UserEntity.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data();
@@ -37,6 +38,7 @@ class UserEntity {
       'email': email,
       'avatar': avatar,
       'groupsId': groupsId,
+      'invites': invites,
     };
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unoverse/presentation/pages/home/add_new_group.dart';
 
 import 'package:unoverse/presentation/widgets/my_card.dart';
 import 'package:unoverse/presentation/widgets/my_drawer.dart';
@@ -97,14 +98,8 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 handleInteractionOrReset(
                   context: context,
-                  onValid: () async {
-                    print('--------------');
-                    print('Nome: ${userAuth.displayName}');
-                    print('Email: ${user.email}');
-                    print('Avatar: ${userAuth.photoURL}');
-                    print('Grupos: ${user.groupsId}');
-                    print('Name Group: ${groups[0].name}');
-                    print(groups.length);
+                  onValid: () {
+                    addNewGroup(context: context);
                   },
                 );
               },

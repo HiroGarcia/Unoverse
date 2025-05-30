@@ -6,21 +6,16 @@ class MyTextfield extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final int? maxLength;
 
-  const MyTextfield({
-    super.key,
-    required this.controller,
-    required this.labelText,
-    required this.obscureText,
-    this.keyboardType,
-    this.validator,
-  });
+  const MyTextfield({super.key, required this.controller, required this.labelText, required this.obscureText, this.keyboardType, this.validator, this.maxLength});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      maxLength: maxLength,
       decoration: InputDecoration(
         // border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         enabledBorder: OutlineInputBorder(
